@@ -1,0 +1,2 @@
+# odoo-plugin
+Odoo Plugine
