@@ -60,7 +60,7 @@
         </div>
     </t>
     <t t-name="MessageListScreen">
-        <div class="col-md-12">
+        <!-- <div class="col-md-12"> -->
             <!-- <t t-call="Header"></t> -->
             <div class="well page col-md-5" id="toggle-button" style="padding: 0px;margin: 0px;">
             <ul class="nav nav-tabs o_header_nav_tabs" data-tabs="tabs" id="tabs">
@@ -71,10 +71,10 @@
                     <a data-toggle="tab" href="#odoo_news"><i class="fa fa-newspaper-o"/> Odoo News </a>
                 </li>
                 <li>
-                    <a><i class="fa fa-refresh"/></a>
+                    <a><i class="o_refresh fa fa-refresh"/></a>
                 </li>
                 <li>
-                    <a style="padding: 8px 10px 1px 5px;"><i class="mdi-communication-clear-all" style="font-size: 25px;" title="Mark all as read"/></a>
+                    <a style="padding: 8px 10px 1px 5px;" id="o_mark_as_read"><i class="mdi-communication-clear-all" style="font-size: 25px;" title="Mark all as read"/></a>
                 </li>
                 <li>
                     <a data-toggle="tab" href="#yellow"><i class="fa fa-question-circle"/></a>
@@ -85,7 +85,7 @@
                     <t t-call="MessageList"></t>
                 </div>
                 <div class="tab-pane" id="odoo_news">
-                    <t t-call="MessageList"></t>
+                    <t t-call="OdooNews"></t>
                 </div>
                 <div class="tab-pane" id="yellow">
                     <div class="text-center">
@@ -96,25 +96,98 @@
         </div>
         <!-- <t t-call="MessageList"></t> -->
             
-        </div>
+        <!-- </div> -->
     </t>
 
+    <t t-name="OdooNews">
+        <div class="panel panel-default" style="position: relative;">
+            <span class="mdi-action-bookmark" style="color:#21B799;position: absolute;z-index: 1;font-size: 29px;right: 2px;top: -3px;"/>
+            <div style="position: absolute; overflow: hidden; clip: rect(0px,auto,150px,0px);">
+                <img class="img img-responsive" src="https://www.odoo.com/website/image/ir.attachment/868557_8350146/datas"/>
+            </div>
+            <div class="panel-body" style="padding-top: 160px;">
+                <div>
+                    <div>
+                        <b>Odoo releases a new CRM mobile app</b>
+                    </div>
+                    <div>
+                        <small>One of the best CRM mobile apps on the market</small>
+                    </div>
+                    <small style="font-size: 11px;">
+                        <i class="mdi-social-person" style="font-size:11px;"/>Yves-Pascal Mukadi (ypm) 
+                        <i class="mdi-device-access-time" style="font-size:11px;"/>
+                        Thu Jan 22 2015 5:44 AM</small>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div>
+                    <div>
+                        <b>Odoo CMS: Form Builder</b>
+                    </div>
+                    <div>
+                        <small>Feedback from our crowdfunding campaign</small>
+                    </div>
+                    <small style="font-size: 11px;">
+                        <i class="mdi-social-person" style="font-size:11px;"/>Fabien Pinckaers (fp) 
+                        <i class="mdi-device-access-time" style="font-size:11px;"/>
+                        Thu Jan 22 2015 5:44 AM</small>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default" style="position: relative;">
+            <div style="position: absolute; overflow: hidden; clip: rect(0px,auto,150px,0px);">
+                <img class="img img-responsive" src="https://www.odoo.com/website/image/ir.attachment/763023_207c8a0/datas"/>
+            </div>
+            <div class="panel-body" style="padding-top: 160px;">
+                <div>
+                    <div>
+                        <b>AdSpike, growth hacking web app to increase Adwords R.O.I.</b>
+                    </div>
+                    <div>
+                        <small>An innovative app to help marketers to reduce spending on Google Adwords</small>
+                    </div>
+                    <small style="font-size: 11px;">
+                        <i class="mdi-social-person" style="font-size:11px;"/>Yves-Pascal Mukadi (ypm) 
+                        <i class="mdi-device-access-time" style="font-size:11px;"/>
+                        Thu Jan 22 2015 5:44 AM</small>
+                </div>
+            </div>
+        </div>
+    </t>
     <t t-name="MessageList">
         <div class="o_message_screen">
-            <t t-foreach="widget.messages" t-as="message">
-                <div class="o_message well col-xs-12 col-md-12" t-att-data-notification_id="message.notification_id">
-                    <div class="col-md-2 col-xs-2" style="padding-left: 0px;"><img class="pull-left" src="static/src/img/logo.png" width="50" height="50"></img></div>
-                    <div class="col-md-10 col-xs-10" style="max-width: 300px; word-wrap: break-word; padding-right: 0px;">
-                        <strong t-if="message.data.subject"><t t-raw="message.data.subject"></t></strong>
-                        <span class="o_remove_message mdi-content-clear pull-right" t-att-data-notification_id="message.notification_id"></span>
-                        <div class="o_message_body"><t t-raw="message.data.message"></t></div>
-                        <div>
-                            <span class="text-muted" t-if="message.data.author">by  <t t-esc="message.data.author[1]"></t></span>
-                            <span class="o_timeago text-muted" t-att-id="message.notification_id"><t t-esc=""></t></span>
+            <!-- <t t-foreach="widget.messages" t-as="message"> -->
+                <div class="text-muted" style="margin: 8px 0px;padding-bottom: 3px;font-weight: bold;color: #a24689;border-bottom: 1px solid lightgray;">Today 
+                    <span class="badge"><t t-esc="widget.messages.length"></t></span>
+                </div>
+                <t t-foreach="widget.messages" t-as="message">
+                    <div class="o_message panel panel-default" t-att-data-notification_id="message.notification_id">
+                        <div class="panel-body" style="position:relative;">
+                            <div class="o_panel_options">
+                                <span class="mdi-action-query-builder"/>
+                                <span class="o_remove_message mdi-action-done-all" t-att-data-notification_id="message.notification_id"/>
+                            </div>
+                            <div>
+                                <div>
+                                    <strong t-if="message.data.subject"><t t-raw="message.data.subject"></t></strong>
+                                </div>
+                                <div>
+                                    <small><t t-raw="message.data.message"></t></small>
+                                </div>
+                                <small style="font-size: 11px;">
+                                    <t t-if="message.data.author_name">
+                                        <i class="mdi-social-person" style="font-size:11px;"/>
+                                        <t t-esc="message.data.author_name"></t>
+                                    </t>
+                                    <i class="mdi-device-access-time" style="font-size:11px;"/>
+                                    <span class="o_timeago" t-att-id="message.notification_id"></span></small>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </t>
+                </t>
+            <!-- </t> -->
             <t t-if="!widget.messages.length">
                 <p class="text-center text-muted o_no_content"><b>Well done!</b><br/>Your inbox is empty.</p>
             </t>
@@ -160,15 +233,6 @@
                     <li><div>Total Messages <div class="badge"><t t-esc="widget.messages.length"></t></div></div></li>
                 </ul>
             </div>
-        </div>
-    </t>
-
-    <t t-name="Throbber">
-        <div>
-            <div class="oe_blockui_spin" style="height: 50px">
-            </div>
-            <br />
-            <div class="oe_throbber_message" style="color:white"></div>
         </div>
     </t>
 

@@ -93,7 +93,7 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
         prepare_and_load_server_data: function(messages) {
             var self = this;
             _.each(messages, function(message) {
-                self.odoo_chrome_gcm_db.save_mesages('messages', {'data': { 'subject': message.subject, 'message': message.body, 'res_id': message.res_id, 'model': message.model, 'author': message.author_id, 'date': message.date,'url': self.get_url(message), 'id': message.id }, 'notification_id': self.odoo_chrome_gcm_db.getNotificationId()})
+                self.odoo_chrome_gcm_db.save_mesages('messages', {'data': { 'subject': message.subject, 'message': message.body, 'res_id': message.res_id, 'model': message.model, 'author_id': message.author_id[0], 'author_name': message.author_id[1], 'date': message.date,'url': self.get_url(message), 'message_id': message.id }, 'notification_id': self.odoo_chrome_gcm_db.getNotificationId(), 'is_read': false, 'receive_date': (moment(message.date).format("YYYY-MM-DD HH:MM:SS") || moment().format("YYYY-MM-DD HH:MM:SS"))})
             });
             console.log("After prepare_and_load_server_data ::: ");
         },
@@ -247,6 +247,7 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             }
         },
         blockUI: function() {
+            
             return $.blockUI.apply($, arguments);
         },
         unblockUI: function () {
@@ -426,6 +427,7 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             var self = this;
             this._super();
             $(window).bind('storage', function (e) {
+                console.log("Inside storage change ::::: ", e);
                 if (e.originalEvent.key && e.originalEvent.key == 'messages') {
                     self.reload_screen();
                 }
@@ -452,6 +454,7 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             this.odoo_chrome_gcm_db.remove_msg_by_notif_id(notification_id);
             if ($(e.target).hasClass('o_remove_message')) {
                 this.reload_screen();
+                return;
             }
             window.open(message.data.url);
         },
@@ -515,14 +518,24 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             this.reload_screen();
         },
         reload_screen: function() {
+            var self = this;
+            this.messages = this.odoo_chrome_gcm_db.load('messages');
+            this.messages = _.filter(this.messages, function(message) {return message && message.data != undefined;});
             var $temp = QWeb.render("MessageList", { widget: this });
             this.$el.find(".o_message_screen").replaceWith($temp);
+            _.each(this.messages, function(message) {
+                if (message.data.date) {
+                    var $message_element = self.$el.find(".o_timeago#"+message.notification_id);
+                    var timerelative = $.timeago(message.data.date);
+                    $message_element.text(timerelative);
+                }
+            });
             //this.main_widget.screen_selector.set_current_screen("message_list_screen", {}, {}, true, true);
         },
         on_refresh: function(e) {
             var self = this;
             self.blockUI();
-            $(e.currentTarget).addClass('o_active_spin');
+            $(e.currentTarget).addClass('fa-spin');
             var messages = this.odoo_chrome_gcm_db.load('messages');
             var available_message_ids = _.map(messages, function(message) {
                 return message.data.id;

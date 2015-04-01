@@ -30,9 +30,6 @@ body {
     cursor: pointer;
     overflow-x: hidden;
 }
-.o_message_body > p {
-    margin-bottom: 2px;
-}
 .o_gcm_register_key {
     background-color: #a24689 !important;
 }
@@ -40,41 +37,12 @@ body {
     padding: 20px !important;
 }
 .o_message_screen {
-    margin-top: 60px !important;
+    //margin-top: 60px !important;
 }
 .o_no_content {
     color: #777777;
     padding-top: 25px;
     font-size: 125%;
-}
-
-/* Spinner icon stuff */
-.o_refresh {
-    padding-top: 6px;
-}
-.o_active_spin {
-  -webkit-animation: o_active_spin 2s infinite linear;
-  animation: o_active_spin 2s infinite linear;
-}
-@-webkit-keyframes o_active_spin {
-  0% {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(359deg);
-    transform: rotate(359deg);
-  }
-}
-@keyframes o_active_spin {
-  0% {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(359deg);
-    transform: rotate(359deg);
-  }
 }
 
 /* New style stuff */
@@ -88,6 +56,7 @@ body {
 .o_tab_content{
     padding: 50px 10px 10px 10px;
     background:#EEEEEE;
+    min-height: 350px;
 }
 .o_group_row{
     margin: 8px 0px;

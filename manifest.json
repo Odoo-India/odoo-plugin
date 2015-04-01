@@ -14,6 +14,7 @@
         "scripts": [
             "static/lib/jquery/jquery.js",
             "static/lib/underscore/underscore.js",
+            "static/lib/moment/moment.js",
             "static/lib/qweb/qweb2.js",
             "static/src/js/openerpframework.js",
             "static/src/js/db.js",

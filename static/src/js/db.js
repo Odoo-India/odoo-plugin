@@ -30,7 +30,7 @@ function odoo_chrome_gcm_db(odoo_chrome_gcm) {
                 data = [];
             }
             for(var i = 0, len = data.length; i < len; i++) {
-                if(data[i].data.id === message.data.id) {
+                if(data[i].data.message_id == message.data.message_id) {
                     _.extend(data[i], message);
                     this.save('messages',data);
                     return;
