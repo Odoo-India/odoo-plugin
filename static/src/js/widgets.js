@@ -37,6 +37,7 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
                 return def.reject();
             }
             var session = new openerp.Session(undefined, origin, {use_cors: true});
+            session.on('error', this, this.rpc_error);
             session.session_reload().then(function() {
                 if (self.session_is_valid(session) && register_key) {
                     odoo_chrome_gcm.session = session;
@@ -79,7 +80,6 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             _.each(domains, function(domain) {
                 notif_domain.push(domain);
             });
-            console.log("notif_domain is ::: ", notif_domain);
             new odoo_chrome_gcm.Model(odoo_chrome_gcm.session, "mail.notification")
                     .call("search_read", {domain: notif_domain, 'fields': ['message_id']}).done( function(messages) {
                             var message_ids = _.map(messages, function(message) { return message.message_id[0]; });
@@ -205,40 +205,10 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
         },
     });
 
-    var Throbber = openerp.Widget.extend({
-        template: "Throbber",
-        start: function() {
-            var opts = {
-              lines: 13, // The number of lines to draw
-              length: 7, // The length of each line
-              width: 4, // The line thickness
-              radius: 10, // The radius of the inner circle
-              rotate: 0, // The rotation offset
-              color: '#FFF', // #rgb or #rrggbb
-              speed: 1, // Rounds per second
-              trail: 60, // Afterglow percentage
-              shadow: false, // Whether to render a shadow
-              hwaccel: false, // Whether to use hardware acceleration
-              className: 'spinner', // The CSS class to assign to the spinner
-              zIndex: 2e9, // The z-index (defaults to 2000000000)
-              top: 'auto', // Top position relative to parent in px
-              left: 'auto' // Left position relative to parent in px
-            };
-            this.spin = new Spinner(opts).spin(this.$el[0]);
-            this.start_time = new Date().getTime();
-        },
-        destroy: function() {
-            if (this.spin)
-                this.spin.stop();
-            this._super();
-        },
-    });
-
     odoo_chrome_gcm.ScreenWidget = openerp.Widget.extend({
         //Base widget class, basically meant to show/hide particular screen
         init: function(parent, options) {
             this._super(parent, options);
-            this.throbbers = [];
         },
         show: function() {
             /*
@@ -277,15 +247,9 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             }
         },
         blockUI: function() {
-            var tmp = $.blockUI.apply($, arguments);
-            var throbber = new Throbber();
-            this.throbbers.push(throbber);
-            throbber.appendTo($(".oe_blockui_spin_container"));
-            return tmp;
+            return $.blockUI.apply($, arguments);
         },
         unblockUI: function () {
-            _.invoke(this.throbbers, 'destroy');
-            this.throbbers = [];
             return $.unblockUI.apply($, arguments);
         }
     });
@@ -402,8 +366,10 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
                                         self.main_widget.screen_selector.set_current_screen("message_list_screen", {}, {}, true, true);
                                     });
                                 });
-                        }).fail(function(error) {
+                        }).fail(function(error, event) {
                             console.log("Inside Failure ", error);
+                            self.unblockUI();
+                            odoo_chrome_gcm.session.trigger('error', error, event);
                         });
                     });
                 });
@@ -411,11 +377,18 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
 
             var origin = this.odoo_chrome_gcm_db.load('server_origin');
             var session = new openerp.Session(undefined, form_data.server_host, {use_cors: true});
+            session.on('error', this.main_widget, this.main_widget.rpc_error);
             self.blockUI();
             this.def = session.session_authenticate(form_data.db, form_data.user, form_data.pwd).done(function() {
                         odoo_chrome_gcm.session = session;
                         self.odoo_chrome_gcm_db.save('server_origin', session.origin);
                         register_key_callback();
+                    }).fail(function(error, event) {
+                        self.unblockUI();
+                        if (!error || !error.data) {
+                            var error = {'data': {'exception_type': 'validation_error', 'arguments': [_t('Something went wrong, please check your username or password')]}}
+                        }
+                        session.trigger('error', error, event);
                     });
         },
         session_is_valid: function(session) {

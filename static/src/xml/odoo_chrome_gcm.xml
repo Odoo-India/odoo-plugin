@@ -106,7 +106,7 @@
     </t>
     <t t-name="Header" t-extend="GenericHeader">
         <t t-jquery=".navbar-brand" t-operation="after">
-            <a class="navbar-brand pull-right" href="#"><span class="o_refresh glyphicon glyphicon-repeat"></span></a>
+            <a class="o_refresh navbar-brand pull-right fa fa-refresh" href="#"></a>
         </t>
         <t t-jquery=".o_menu > ul > li:first" t-operation="before">
             <li id="o_mark_as_read"><a href="#">Mark all as read</a></li>
