@@ -49,15 +49,20 @@
         </div>
     </t>
     <t t-name="DatabaseList">
-        <label id="db_label" for="db" class="col-lg-2 control-label">Database</label>
-        <div class="col-lg-10">
-            <select name="db" id="db" class="form-control">
-                <option></option>
-                <t t-foreach="databases" t-as="database">
-                    <option t-att-value="database"><t t-esc="database"></t></option>
-                </t>
-            </select>
-        </div>
+        <t t-if="databases.length > 1">
+            <label id="db_label" for="db" class="col-lg-2 control-label">Database</label>
+            <div class="col-lg-10">
+                <select name="db" id="db" class="form-control">
+                    <option></option>
+                        <t t-foreach="databases" t-as="database">
+                            <option t-att-value="database"><t t-esc="database"></t></option>
+                        </t>
+                </select>
+            </div>
+        </t>
+        <t t-if="databases.length == 1">
+            <input type="hidden" id="db" t-att-value="databases[0]"/>
+        </t>
     </t>
     <t t-name="MessageListScreen">
         <!-- <div class="col-md-12"> -->
@@ -172,6 +177,7 @@
                             <div>
                                 <div>
                                     <strong t-if="message.data.subject"><t t-raw="message.data.subject"></t></strong>
+                                    <strong t-if="message.data.record_name"><t t-raw="message.data.record_name"></t></strong>
                                 </div>
                                 <div>
                                     <small><t t-raw="message.data.message"></t></small>

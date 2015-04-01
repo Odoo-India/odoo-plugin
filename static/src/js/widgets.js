@@ -83,7 +83,7 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             new odoo_chrome_gcm.Model(odoo_chrome_gcm.session, "mail.notification")
                     .call("search_read", {domain: notif_domain, 'fields': ['message_id']}).done( function(messages) {
                             var message_ids = _.map(messages, function(message) { return message.message_id[0]; });
-                            return new odoo_chrome_gcm.Model(odoo_chrome_gcm.session, "mail.message").call("read", [message_ids, ['subject', 'body', 'res_id', 'model', 'author_id', 'date']]).done(function(message_list) {
+                            return new odoo_chrome_gcm.Model(odoo_chrome_gcm.session, "mail.message").call("read", [message_ids, ['subject', 'body', 'res_id', 'model', 'author_id', 'date', 'record_name']]).done(function(message_list) {
                                     self.prepare_and_load_server_data(message_list);
                                     def.resolve();
                                 });
@@ -93,7 +93,7 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
         prepare_and_load_server_data: function(messages) {
             var self = this;
             _.each(messages, function(message) {
-                self.odoo_chrome_gcm_db.save_mesages('messages', {'data': { 'subject': message.subject, 'message': message.body, 'res_id': message.res_id, 'model': message.model, 'author_id': message.author_id[0], 'author_name': message.author_id[1], 'date': message.date,'url': self.get_url(message), 'message_id': message.id }, 'notification_id': self.odoo_chrome_gcm_db.getNotificationId(), 'is_read': false, 'receive_date': (moment(message.date).format("YYYY-MM-DD HH:MM:SS") || moment().format("YYYY-MM-DD HH:MM:SS"))})
+                self.odoo_chrome_gcm_db.save_mesages('messages', {'data': { 'subject': message.subject, 'message': message.body, 'record_name': message.record_name, 'res_id': message.res_id, 'model': message.model, 'author_id': message.author_id[0], 'author_name': message.author_id[1], 'date': message.date,'url': self.get_url(message), 'message_id': message.id }, 'notification_id': self.odoo_chrome_gcm_db.getNotificationId(), 'is_read': false, 'receive_date': (moment(message.date).format("YYYY-MM-DD HH:MM:SS") || moment().format("YYYY-MM-DD HH:MM:SS"))})
             });
             console.log("After prepare_and_load_server_data ::: ");
         },
@@ -247,7 +247,7 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             }
         },
         blockUI: function() {
-            
+
             return $.blockUI.apply($, arguments);
         },
         unblockUI: function () {
@@ -397,14 +397,21 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
         },
         on_change_server_uri: function(e) {
             var self = this;
+            var def = $.Deferred()
             var server_uri = this.self_hosted ? this.$("#inputSelfServer").val() : this.$("#inputServer").val();
             this.$(".o_gcm_register_key").attr({'disabled': true});
+            if (server_uri == "https://www.odoo.com" || server_uri == "https://accounts.odoo.com") {
+                def.resolve(['openerp']);
+            }
             odoo_chrome_gcm.jsonRpc(this.strip_trailing_slash(server_uri) + '/web/database/get_list', 'call', {}).done(function(result) {
-                self.$(".o_gcm_register_key").attr({'disabled': false});
                 if (self.$("#db").length) {
                     self.$("#db_label").remove();
                     self.$("#db").remove();
                 }
+                def.resolve(result);
+            });
+            $.when(def).done(function(result) {
+                self.$(".o_gcm_register_key").attr({'disabled': false});
                 self.$(".o_accept_login").before(QWeb.render('DatabaseList', {widget: self, databases: result }));
             });
         },
