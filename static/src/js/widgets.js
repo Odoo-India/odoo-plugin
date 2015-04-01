@@ -1,6 +1,6 @@
 function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
     'use strict';
-    var QWeb = openerp.qweb, //Need to use openerp.qweb because odoo_chrome_gcm is coming from background.js file, so templates are not added in it, need to check
+    var QWeb = openerp.qweb,
         _t = odoo_chrome_gcm._t;
 
     odoo_chrome_gcm.odoo_chrome_gcm_main_widget = openerp.Widget.extend({

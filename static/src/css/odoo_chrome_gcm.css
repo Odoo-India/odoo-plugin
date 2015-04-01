@@ -37,7 +37,7 @@ body {
     background-color: #a24689 !important;
 }
 .o_login {
-    padding-top: 55px !important;
+    padding: 20px !important;
 }
 .o_message_screen {
     margin-top: 60px !important;
@@ -75,4 +75,48 @@ body {
     -webkit-transform: rotate(359deg);
     transform: rotate(359deg);
   }
+}
+
+/* New style stuff */
+.o_header_nav_tabs{
+    background: #fff;
+    position: fixed;
+    z-index: 1000;
+    width: 100%;
+    box-shadow:0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px rgba(0, 0, 0, 0.16);
+}
+.o_tab_content{
+    padding: 50px 10px 10px 10px;
+    background:#EEEEEE;
+}
+.o_group_row{
+    margin: 8px 0px;
+    padding-bottom: 3px;
+    font-weight: bold;
+    border-bottom: 1px solid lightgray;
+    color: #a24689;
+}
+.o_group_row_danger{
+    color: #F44336;
+}
+.o_panel_options{
+    position: absolute;
+    right: 10px;top: 10px;
+    font-size: 17px;
+}
+.nav-tabs>li>a, .nav-tabs>li>a:hover, .nav-tabs>li>a:focus {
+  color: #a24689 !important;
+}
+.nav-tabs li.active, .nav-tabs>li.active>a{
+    background: #a24689;
+    color: #fff !important;
+}
+.badge{
+    background-color: #21B799;
+}
+div.panel-body > div > small{
+    color: rgb(194, 192, 192);
+}
+::-webkit-scrollbar { 
+        display: none; 
 }

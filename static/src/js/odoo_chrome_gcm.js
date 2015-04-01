@@ -55,6 +55,7 @@ function application() {
 
     jQuery(document).ready(function() {
         var app = new odoo_chrome_gcm.App($(".odoo_chrome_gcm"));
+        $.material.init();
     });
 };
 //chrome.runtime.getBackgroundPage(function(background) {

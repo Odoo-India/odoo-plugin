@@ -3,7 +3,7 @@
 -->
 <templates id="template" xml:space="preserve">
     <t t-name="OdooChromeGCM">
-        <div class="container-fluid" style="padding-left: 10px; padding-right: 0px;">
+        <div class="container">
             <div class="row screens">
             </div>
         </div>
@@ -11,8 +11,11 @@
 
     <t t-name="RegisterScreen">
         <div class="col-md-12 o_login" style="padding-left: 0px; padding-top: 0px; ">
-            <t t-call="GenericHeader"></t>
+            <!-- <t t-call="GenericHeader"></t> -->
             <div class="well bs-component" style="margin-bottom: 2px;">
+                <div>
+                    <img class="img img-responsive" src="static/img/logo2.png" style="margin: 0px auto 19px auto;max-height: 80px;"/>
+                </div>
                 <div class="form-group">
                     <label t-if="!widget.self_hosted" for="inputServer" class="col-lg-2 control-label">Server</label>
                     <div t-if="!widget.self_hosted" class="col-lg-10">
@@ -58,8 +61,40 @@
     </t>
     <t t-name="MessageListScreen">
         <div class="col-md-12">
-            <t t-call="Header"></t>
-            <t t-call="MessageList"></t>
+            <!-- <t t-call="Header"></t> -->
+            <div class="well page col-md-5" id="toggle-button" style="padding: 0px;margin: 0px;">
+            <ul class="nav nav-tabs o_header_nav_tabs" data-tabs="tabs" id="tabs">
+                <li class="active">
+                    <a data-toggle="tab" href="#odoo_notifications"><i class="mdi-social-notifications-on"/> Notification </a>
+                </li>
+                <li>
+                    <a data-toggle="tab" href="#odoo_news"><i class="fa fa-newspaper-o"/> Odoo News </a>
+                </li>
+                <li>
+                    <a><i class="fa fa-refresh"/></a>
+                </li>
+                <li>
+                    <a style="padding: 8px 10px 1px 5px;"><i class="mdi-communication-clear-all" style="font-size: 25px;" title="Mark all as read"/></a>
+                </li>
+                <li>
+                    <a data-toggle="tab" href="#yellow"><i class="fa fa-question-circle"/></a>
+                </li>
+            </ul>
+            <div class="tab-content text-muted o_tab_content" id="my-tab-content">
+                <div class="tab-pane active" id="odoo_notifications">
+                    <t t-call="MessageList"></t>
+                </div>
+                <div class="tab-pane" id="odoo_news">
+                    <t t-call="MessageList"></t>
+                </div>
+                <div class="tab-pane" id="yellow">
+                    <div class="text-center">
+                        <img class="img img-responsive" src="static/img/logo2.png"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- <t t-call="MessageList"></t> -->
             
         </div>
     </t>
@@ -84,7 +119,7 @@
                 <p class="text-center text-muted o_no_content"><b>Well done!</b><br/>Your inbox is empty.</p>
             </t>
             <!-- Added footer here because on each refresh we also want to update the footer-->
-            <t t-call="GenericFooter"></t>
+            <!-- <t t-call="GenericFooter"></t> -->
         </div>
     </t>
     <t t-name="GenericHeader">
