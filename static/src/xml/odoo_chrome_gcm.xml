@@ -3,7 +3,7 @@
 -->
 <templates id="template" xml:space="preserve">
     <t t-name="OdooChromeGCM">
-        <div class="container" style="max-width: 500px;">
+        <div class="container" style="max-width: 400px;">
             <div class="row screens">
             </div>
         </div>
@@ -131,13 +131,13 @@
 
     <t t-name="Message">
         <div class="o_message panel panel-default" t-att-data-notification_id="message.notification_id">
-            <div class="panel-body" style="position:relative;">
+            <div class="panel-body" style="position:relative;word-wrap: break-word;">
                 <div class="o_panel_options">
                     <span class="mdi-action-query-builder"/>
                     <span class="o_read_done mdi-action-done-all" t-att-data-notification_id="message.notification_id"/>
                 </div>
                 <div>
-                    <div style="max-width: 400px;">
+                    <div style="max-width: 350px;">
                         <strong t-if="message.data.subject"><t t-raw="message.data.subject"></t></strong>
                         <strong t-if="message.data.record_name"><t t-raw="message.data.record_name"></t></strong>
                     </div>
