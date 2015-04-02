@@ -118,12 +118,14 @@
 
     <t t-name="MessageGroup">
         <div t-att-id="widget.name">
-            <div class="text-muted" style="margin: 8px 0px;padding-bottom: 3px;font-weight: bold;color: #a24689;border-bottom: 1px solid lightgray;"><t t-esc="widget.title"></t> 
-                <span class="badge"><t t-esc="widget.messages.length"></t></span>
+            <div t-if="widget.messages.length">
+                <div class="text-muted" style="margin: 8px 0px;padding-bottom: 3px;font-weight: bold;color: #a24689;border-bottom: 1px solid lightgray;"><t t-esc="widget.title"></t> 
+                    <span class="badge"><t t-esc="widget.messages.length"></t></span>
+                </div>
+                <t t-foreach="widget.messages" t-as="message">
+                    <t t-call="Message"></t>
+                </t>
             </div>
-            <t t-foreach="widget.messages" t-as="message">
-                <t t-call="Message"></t>
-            </t>
         </div>
     </t>
 
@@ -143,9 +145,12 @@
                         <small><t t-raw="message.data.message"></t></small>
                     </div>
                     <small style="font-size: 11px;">
+                        <i class="mdi-social-person" style="font-size:11px;"/>
                         <t t-if="message.data.author_name">
-                            <i class="mdi-social-person" style="font-size:11px;"/>
                             <t t-esc="message.data.author_name"></t>
+                        </t>
+                        <t t-if="!message.data.author_name">
+                            <span>Odoo</span>
                         </t>
                         <i class="mdi-device-access-time" style="font-size:11px;"/>
                         <span class="o_timeago" t-att-id="message.notification_id"></span></small>

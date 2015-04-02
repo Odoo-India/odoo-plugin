@@ -95,7 +95,7 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
         prepare_and_load_server_data: function(messages) {
             var self = this;
             _.each(messages, function(message) {
-                self.odoo_chrome_gcm_db.save_mesages('messages', {'data': { 'subject': message.subject, 'message': message.body, 'record_name': message.record_name, 'res_id': message.res_id, 'model': message.model, 'author_id': message.author_id[0], 'author_name': message.author_id[1], 'date': message.date,'url': self.get_url(message), 'message_id': message.id, 'is_read': false, 'receive_date': (moment(message.date).format("YYYY-MM-DD HH:MM:SS") || moment().format("YYYY-MM-DD HH:MM:SS")) }, 'notification_id': self.odoo_chrome_gcm_db.getNotificationId()})
+                self.odoo_chrome_gcm_db.save_mesages('messages', {'data': { 'subject': message.subject, 'message': message.body, 'record_name': message.record_name, 'res_id': message.res_id, 'model': message.model, 'author_id': message.author_id[0], 'author_name': message.author_id[1], 'date': message.date,'url': self.get_url(message), 'message_id': message.id, 'is_read': false, 'receive_date': (moment(message.date).format("YYYY-MM-DD HH:MM:SS") || moment().format("YYYY-MM-DD HH:MM:SS")), 'mtype': 'user' }, 'notification_id': self.odoo_chrome_gcm_db.getNotificationId()})
             });
         },
         get_url: function(message) {
@@ -445,9 +445,18 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             this.messages = this.odoo_chrome_gcm_db.load('messages');
             this.message_groups = this.generate_message_groups(this.messages);
             this.odoo_news = _(this.message_groups.odoo).values() || [];
+            this.odoo_news = this.odoo_news.length ? this.odoo_news[0] : [];
             delete this.message_groups.odoo;
             this.replaceElement(QWeb.render(this.template, {widget: this}));
             var res_super = this._super.apply(this, arguments);
+            _.each(this.odoo_news, function(message) {
+                if (message.data.date || message.data.receive_date) {
+                    var $message_element = self.$el.find(".o_timeago#"+message.notification_id);
+                    console.log("timerelative is ::: ",message.data.receive_date);
+                    var timerelative = $.timeago((message.data.date || message.data.receive_date));
+                    $message_element.text(timerelative);
+                }
+            });
             this.render_groups();
             return res_super;
         },
@@ -457,9 +466,11 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             today_message_group = today_message_group.length ? today_message_group[0] : [];
             var tomorrow_message_group = this.get_group(moment().add(1, 'days').format('YYYY-MM-DD'));
             tomorrow_message_group = tomorrow_message_group.length ? tomorrow_message_group[0] : [];
+            var delayed_message_group = this.get_delayed(moment().format('YYYY-MM-DD'));
+            delayed_message_group = delayed_message_group.length ? delayed_message_group[0] : [];
             var upcoming_message_group = this.get_upcoming(moment().add(2, 'days').format('YYYY-MM-DD'))
             var someday_group = this.get_someday();
-            var groups = [{'group_name': 'today', 'group_title': 'Today', 'messages': today_message_group}, {'group_name': 'tomorrow', 'group_title': 'Tomorrow', 'messages': tomorrow_message_group}, {'group_name': 'up_coming', 'group_title': 'Up coming', 'messages': upcoming_message_group}, {'group_name': 'some_day', 'group_title': 'Some Day', 'messages': someday_group}]
+            var groups = [{'group_name': 'delayed', 'group_title': _t('Delayed'), 'messages': delayed_message_group}, {'group_name': 'today', 'group_title': _t('Today'), 'messages': today_message_group}, {'group_name': 'tomorrow', 'group_title': _t('Tomorrow'), 'messages': tomorrow_message_group}, {'group_name': 'up_coming', 'group_title': _t('Up coming'), 'messages': upcoming_message_group}, {'group_name': 'some_day', 'group_title': _t('Some Day'), 'messages': someday_group}]
             this.record_groups = _.each(groups, function(group) {
                 var message_group_obj = new odoo_chrome_gcm.MessageGroup(self, group);
                 message_group_obj.appendTo(self.$el.find(".o_message_screen"));
@@ -471,10 +482,11 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             var type_grouped_messages = _(messages).chain()
                 .filter(function(message) {return message && message.data != undefined;})
                 .groupBy(function(message) {
-                    return message.data.type;
+                    return message.data.mtype;
                 }).value();
             _.map(type_grouped_messages, function(type_group, type) {
-                var key = type == 'undefined' ? 'general_messages' : type;
+                var key = type == 'undefined' ? 'user' : type;
+                console.log("key is ::: ", key);
                 grouped_messages[key] = _(type_group).groupBy(function(group) {
                     return (group.data.receive_date).substring(0, 10);
                 });
@@ -482,21 +494,33 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             return grouped_messages;
         },
         get_group: function(date) {
-            return _(this.message_groups.general_messages).chain()
+            if (_.isEmpty(this.message_groups)) {
+                return [];
+            }
+            return _(this.message_groups.user).chain()
                 .pick(date).values().value();
         },
         get_upcoming: function(date) {
             var upcoming_messages = [];
-            _.each(this.message_groups.general_messages, function(message_group, key) {
+            _.each(this.message_groups.user, function(message_group, key) {
                 if (moment(key).isAfter(moment(date))) {
                     upcoming_messages.concat(message_group);
                 }
             });
             return upcoming_messages;
         },
+        get_delayed: function(date) {
+            var delayed_messages = [];
+            _.each(this.message_groups.user, function(message_group, key) {
+                if (moment(key).isBefore(moment(date))) {
+                    delayed_messages.concat(message_group);
+                }
+            });
+            return delayed_messages;
+        },
         get_someday: function() {
             var someday_messages = [];
-            _.each(this.message_groups.general_messages, function(message_group, key) {
+            _.each(this.message_groups.user, function(message_group, key) {
                 if (moment(key) == undefined || moment(key) == 'undefined') {
                     someday_messages.concat(message_group);
                 }
@@ -506,7 +530,6 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
         set_notification_as_read: function(notification_ids) {
             return new odoo_chrome_gcm.Model(odoo_chrome_gcm.session, "mail.notification").call("write", [notification_ids, {'is_read': true}]);
         },
-        //TODO: Redevelop as per new design
         on_mark_all_as_read: function() {
             var self = this;
             var def = $.Deferred()
@@ -532,7 +555,6 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
         on_stop_notification: function() {
             console.log("Here Inside stop notification ");
         },
-        //TODO: Redevelop as per new design
         reload_screen: function() {
             this.main_widget.screen_selector.set_current_screen("message_list_screen", {}, {}, true, true);
         },
@@ -547,7 +569,7 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             var domain = [['message_id', 'not in', available_message_ids]]
             self.main_widget.load_server_data(domain).then(function() {
                 $.unblockUI();
-                $(e.currentTarget).removeClass('o_active_spin');
+                $(e.currentTarget).removeClass('fa-spin');
                 self.reload_screen();
             });
             
@@ -574,7 +596,7 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             _.each(this.messages, function(message) {
                 if (message.data.date) {
                     var $message_element = self.$el.find(".o_timeago#"+message.notification_id);
-                    var timerelative = $.timeago(message.data.date);
+                    var timerelative = $.timeago((message.data.date || message.data.receive_date));
                     $message_element.text(timerelative);
                 }
             });
@@ -625,7 +647,7 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             _.each(this.messages, function(message) {
                 if (message.data.date) {
                     var $message_element = self.$el.find(".o_timeago#"+message.notification_id);
-                    var timerelative = $.timeago(message.data.date);
+                    var timerelative = $.timeago((message.data.date || message.data.receive_date));
                     $message_element.text(timerelative);
                 }
             });
