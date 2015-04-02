@@ -38,8 +38,8 @@ function on_message_receive(message) {
     console.log("Message is ::: ", message);
     var notificationID = odoo_chrome_gcm_db_background.getNotificationId();
     message['notification_id'] = notificationID;
-    message['receive_date'] = moment().format("YYYY-MM-DD HH:MM:SS");
-    message['is_read'] = false;
+    message.data['receive_date'] = moment(message.data.date).format("YYYY-MM-DD HH:MM:SS");
+    message.data['is_read'] = false;
     odoo_chrome_gcm_db_background.save_mesages('messages', message);
     var messageString = "";
     var title = message.data.subject;

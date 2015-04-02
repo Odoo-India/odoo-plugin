@@ -42,13 +42,15 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
                 if (self.session_is_valid(session) && register_key) {
                     odoo_chrome_gcm.session = session;
                     //TODO: Check is it really needed to call res.users and res.partner, we need partner for registering key, not more then that, while registering key we already reading partner, remove these calls will make extension screen initialization faster
+
                     //Fetch partner if it is no there in session
-                    new odoo_chrome_gcm.Model(odoo_chrome_gcm.session, "res.users")
-                        .call("read", [[odoo_chrome_gcm.session.uid], ['partner_id']]).done(
-                            function(partner) {
-                                odoo_chrome_gcm.session.partner = partner[0].partner_id;
-                                def.resolve();
-                        });
+                    // new odoo_chrome_gcm.Model(odoo_chrome_gcm.session, "res.users")
+                    //     .call("read", [[odoo_chrome_gcm.session.uid], ['partner_id']]).done(
+                    //         function(partner) {
+                    //             odoo_chrome_gcm.session.partner = partner[0].partner_id;
+                    //             def.resolve();
+                    //     });
+                    def.resolve();
                 } else {
                     def.reject();
                 }
@@ -93,9 +95,8 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
         prepare_and_load_server_data: function(messages) {
             var self = this;
             _.each(messages, function(message) {
-                self.odoo_chrome_gcm_db.save_mesages('messages', {'data': { 'subject': message.subject, 'message': message.body, 'record_name': message.record_name, 'res_id': message.res_id, 'model': message.model, 'author_id': message.author_id[0], 'author_name': message.author_id[1], 'date': message.date,'url': self.get_url(message), 'message_id': message.id }, 'notification_id': self.odoo_chrome_gcm_db.getNotificationId(), 'is_read': false, 'receive_date': (moment(message.date).format("YYYY-MM-DD HH:MM:SS") || moment().format("YYYY-MM-DD HH:MM:SS"))})
+                self.odoo_chrome_gcm_db.save_mesages('messages', {'data': { 'subject': message.subject, 'message': message.body, 'record_name': message.record_name, 'res_id': message.res_id, 'model': message.model, 'author_id': message.author_id[0], 'author_name': message.author_id[1], 'date': message.date,'url': self.get_url(message), 'message_id': message.id, 'is_read': false, 'receive_date': (moment(message.date).format("YYYY-MM-DD HH:MM:SS") || moment().format("YYYY-MM-DD HH:MM:SS")) }, 'notification_id': self.odoo_chrome_gcm_db.getNotificationId()})
             });
-            console.log("After prepare_and_load_server_data ::: ");
         },
         get_url: function(message) {
             return _.str.sprintf("%s/web#id=%s&view_type=form&model=%s", odoo_chrome_gcm.session.origin, message.res_id, message.model);
@@ -420,21 +421,20 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
     odoo_chrome_gcm.MessageListScreen = odoo_chrome_gcm.ScreenWidget.extend({
         template: 'MessageListScreen',
         events: {
-            "click .o_message": "on_message_click",
-            "click .o_menu ul li": "on_menu_click",
             "click .o_refresh": "on_refresh",
+            "click .o_mark_all_as_read": "on_mark_all_as_read",
         },
         init: function(main_widget, db) {
             this._super.apply(this, arguments);
             this.main_widget = main_widget;
             this.odoo_chrome_gcm_db = db;
+            this.messages = [];
             //this.messages = this.odoo_chrome_gcm_db.load('messages');
         },
         start: function() {
             var self = this;
             this._super();
             $(window).bind('storage', function (e) {
-                console.log("Inside storage change ::::: ", e);
                 if (e.originalEvent.key && e.originalEvent.key == 'messages') {
                     self.reload_screen();
                 }
@@ -443,48 +443,80 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
         renderElement: function() {
             var self = this;
             this.messages = this.odoo_chrome_gcm_db.load('messages');
-            this.messages = _.filter(this.messages, function(message) {return message && message.data != undefined;});
+            this.message_groups = this.generate_message_groups(this.messages);
+            this.odoo_news = _(this.message_groups.odoo).values() || [];
+            delete this.message_groups.odoo;
+            this.replaceElement(QWeb.render(this.template, {widget: this}));
             var res_super = this._super.apply(this, arguments);
-            _.each(this.messages, function(message) {
-                if (message.data.date) {
-                    var $message_element = self.$el.find(".o_timeago#"+message.notification_id);
-                    var timerelative = $.timeago(message.data.date);
-                    $message_element.text(timerelative);
-                }
-
-            });
+            this.render_groups();
             return res_super;
         },
-        on_message_click: function(e) {
-            var notification_id = $(e.currentTarget).data("notification_id");
-            var message = this.odoo_chrome_gcm_db.get_msg_by_notif_id(notification_id);
-            this.odoo_chrome_gcm_db.remove_msg_by_notif_id(notification_id);
-            if ($(e.target).hasClass('o_remove_message')) {
-                this.reload_screen();
-                return;
-            }
-            window.open(message.data.url);
+        render_groups: function() {
+            var self = this;
+            var today_message_group = this.get_group(moment().format('YYYY-MM-DD'));
+            today_message_group = today_message_group.length ? today_message_group[0] : [];
+            var tomorrow_message_group = this.get_group(moment().add(1, 'days').format('YYYY-MM-DD'));
+            tomorrow_message_group = tomorrow_message_group.length ? tomorrow_message_group[0] : [];
+            var upcoming_message_group = this.get_upcoming(moment().add(2, 'days').format('YYYY-MM-DD'))
+            var someday_group = this.get_someday();
+            var groups = [{'group_name': 'today', 'group_title': 'Today', 'messages': today_message_group}, {'group_name': 'tomorrow', 'group_title': 'Tomorrow', 'messages': tomorrow_message_group}, {'group_name': 'up_coming', 'group_title': 'Up coming', 'messages': upcoming_message_group}, {'group_name': 'some_day', 'group_title': 'Some Day', 'messages': someday_group}]
+            this.record_groups = _.each(groups, function(group) {
+                var message_group_obj = new odoo_chrome_gcm.MessageGroup(self, group);
+                message_group_obj.appendTo(self.$el.find(".o_message_screen"));
+                return message_group_obj;
+            });
         },
-        on_menu_click: function(e) {
-            e.stopImmediatePropagation();
-            var $target = $(e.currentTarget);
-            $target.addClass('active');
-            var id = $target.attr('id');
-            if (id) {
-                this["on_"+id.substr(2)](e)
-            }
+        generate_message_groups: function(messages) {
+            var grouped_messages = {};
+            var type_grouped_messages = _(messages).chain()
+                .filter(function(message) {return message && message.data != undefined;})
+                .groupBy(function(message) {
+                    return message.data.type;
+                }).value();
+            _.map(type_grouped_messages, function(type_group, type) {
+                var key = type == 'undefined' ? 'general_messages' : type;
+                grouped_messages[key] = _(type_group).groupBy(function(group) {
+                    return (group.data.receive_date).substring(0, 10);
+                });
+            });
+            return grouped_messages;
         },
-        on_mark_as_read: function() {
+        get_group: function(date) {
+            return _(this.message_groups.general_messages).chain()
+                .pick(date).values().value();
+        },
+        get_upcoming: function(date) {
+            var upcoming_messages = [];
+            _.each(this.message_groups.general_messages, function(message_group, key) {
+                if (moment(key).isAfter(moment(date))) {
+                    upcoming_messages.concat(message_group);
+                }
+            });
+            return upcoming_messages;
+        },
+        get_someday: function() {
+            var someday_messages = [];
+            _.each(this.message_groups.general_messages, function(message_group, key) {
+                if (moment(key) == undefined || moment(key) == 'undefined') {
+                    someday_messages.concat(message_group);
+                }
+            });
+            return someday_messages;
+        },
+        set_notification_as_read: function(notification_ids) {
+            return new odoo_chrome_gcm.Model(odoo_chrome_gcm.session, "mail.notification").call("write", [notification_ids, {'is_read': true}]);
+        },
+        //TODO: Redevelop as per new design
+        on_mark_all_as_read: function() {
             var self = this;
             var def = $.Deferred()
             var message_ids = _.map(this.odoo_chrome_gcm_db.load('messages'), function(message) {
-                return message.data.id;
+                return message.data.message_id;
             });
             new odoo_chrome_gcm.Model(odoo_chrome_gcm.session, "mail.notification")
                 .call("search", [[['message_id', 'in', message_ids]]]).done(function(notification_ids) {
-                    console.log("notification_ids are ::: ", notification_ids);
                         if (notification_ids.length) {
-                            new odoo_chrome_gcm.Model(odoo_chrome_gcm.session, "mail.notification").call("write", [notification_ids, {'is_read': true}]).done(function(result) {
+                            self.set_notification_as_read(notification_ids).done(function(result) {
                                 def.resolve();
                             });
                         } else {
@@ -492,52 +524,17 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
                         }
             });
             $.when(def).done(function() {
-                console.log("Inside doneeeee ::: ");
                 self.odoo_chrome_gcm_db.remove_all_msg();
                 self.messages = self.odoo_chrome_gcm_db.load('messages');
                 self.reload_screen();
             })
         },
-        on_add_account: function() {
-            console.log("Here Inside add account ");
-        },
         on_stop_notification: function() {
             console.log("Here Inside stop notification ");
         },
-        filter_by_type: function(type) {
-            var self = this;
-            if (!type) {
-                this.messages = this.odoo_chrome_gcm_db.load('messages');
-                this.messages = _.filter(this.messages, function(message) {return message && message.data != undefined;});
-                return;
-            }
-            this.messages = _.filter(this.messages, function(message) {return message && message.data.type == type;});
-        },
-        on_odoo_news: function(e) {
-            if (!this.type_filter) {
-                this.type_filter = 'odoo';
-                this.filter_by_type(this.type_filter);
-            } else {
-                this.type_filter = false;
-                $(e.currentTarget).removeClass("active")
-                this.filter_by_type(this.type_filter);
-            }
-            this.reload_screen();
-        },
+        //TODO: Redevelop as per new design
         reload_screen: function() {
-            var self = this;
-            this.messages = this.odoo_chrome_gcm_db.load('messages');
-            this.messages = _.filter(this.messages, function(message) {return message && message.data != undefined;});
-            var $temp = QWeb.render("MessageList", { widget: this });
-            this.$el.find(".o_message_screen").replaceWith($temp);
-            _.each(this.messages, function(message) {
-                if (message.data.date) {
-                    var $message_element = self.$el.find(".o_timeago#"+message.notification_id);
-                    var timerelative = $.timeago(message.data.date);
-                    $message_element.text(timerelative);
-                }
-            });
-            //this.main_widget.screen_selector.set_current_screen("message_list_screen", {}, {}, true, true);
+            this.main_widget.screen_selector.set_current_screen("message_list_screen", {}, {}, true, true);
         },
         on_refresh: function(e) {
             var self = this;
@@ -549,19 +546,89 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             });
             var domain = [['message_id', 'not in', available_message_ids]]
             self.main_widget.load_server_data(domain).then(function() {
-                //$.unblockUI();
-                //$(e.currentTarget).removeClass('o_active_spin');
-                //self.reload_screen();
-                
-                //TODO: To remove, keep for checking throbber
-                setTimeout(function() {
-                    self.unblockUI();
-                    $(e.currentTarget).removeClass('o_active_spin');
-                    self.reload_screen();
-                }, 2000);
-                
+                $.unblockUI();
+                $(e.currentTarget).removeClass('o_active_spin');
+                self.reload_screen();
             });
             
+        },
+    });
+
+    odoo_chrome_gcm.MessageGroup = openerp.Widget.extend({
+        template: 'MessageGroup',
+        events: {
+            "click .o_message": "on_message_click",
+            "click .o_read_done": "on_read_done",
+        },
+        init: function(parent, group) {
+            this.parent = parent;
+            this.name = group.group_name;
+            this.title = group.group_title;
+            this.messages = group.messages;
+            this.odoo_chrome_gcm_db = this.parent.odoo_chrome_gcm_db;
+            this._super.apply(this, arguments);
+        },
+        start: function() {
+            var self = this;
+            this._super.apply(this, arguments);
+            _.each(this.messages, function(message) {
+                if (message.data.date) {
+                    var $message_element = self.$el.find(".o_timeago#"+message.notification_id);
+                    var timerelative = $.timeago(message.data.date);
+                    $message_element.text(timerelative);
+                }
+            });
+        },
+        on_message_click: function(e) {
+            if ($(e.target).hasClass('o_read_done')) {
+                return;
+            }
+            var notification_id = $(e.currentTarget).data("notification_id");
+            var message = this.odoo_chrome_gcm_db.get_msg_by_notif_id(notification_id);
+            window.open(message.data.url);
+        },
+        on_read_done: function(e) {
+            var self = this;
+            e.stopPropagation()
+            var def = $.Deferred();
+            var notification_id = $(e.currentTarget).data("notification_id");
+            var message = this.odoo_chrome_gcm_db.get_msg_by_notif_id(notification_id);
+            console.log("set_notification_as_read is ::: ", message);
+            new odoo_chrome_gcm.Model(odoo_chrome_gcm.session, "mail.notification")
+                .call("search", [[['message_id', '=', message.data.message_id]]]).done(function(notification_ids) {
+                        if (notification_ids.length) {
+                            self.parent.set_notification_as_read(notification_ids).done(function(result) {
+                                def.resolve();
+                            });
+                        } else {
+                            def.resolve();
+                        }
+            });
+            $.when(def).done(function() {
+                self.messages = self.remove_msg_by_notif_id(notification_id);
+                self.odoo_chrome_gcm_db.remove_msg_by_notif_id(notification_id);
+                //TODO: Do not reload screen, just remove it from DOM
+                self.reload_group();
+            });
+        },
+        remove_msg_by_notif_id: function(notification_id) {
+            var messages = _.filter(this.messages, function(message) { return message.notification_id != notification_id.toString(); });
+            return messages;
+        },
+        //Do not reload whole group, just remove whole message from DOM
+        reload_group: function() {
+            var self = this;
+            var $temp = QWeb.render(this.template, { widget: this });
+            console.log("this.$el.find(+this.name) is ", this.$el.find("#"+this.name));
+            //$("#"+this.name).replaceWith($temp);
+            this.replaceElement(QWeb.render(this.template, {widget: this}));
+            _.each(this.messages, function(message) {
+                if (message.data.date) {
+                    var $message_element = self.$el.find(".o_timeago#"+message.notification_id);
+                    var timerelative = $.timeago(message.data.date);
+                    $message_element.text(timerelative);
+                }
+            });
         },
     });
 }

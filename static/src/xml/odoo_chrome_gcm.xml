@@ -65,9 +65,7 @@
         </t>
     </t>
     <t t-name="MessageListScreen">
-        <!-- <div class="col-md-12"> -->
-            <!-- <t t-call="Header"></t> -->
-            <div class="well page col-md-5" id="toggle-button" style="padding: 0px;margin: 0px;">
+        <div class="main_message_screen well page col-md-5" id="toggle-button" style="padding: 0px;margin: 0px;">
             <ul class="nav nav-tabs o_header_nav_tabs" data-tabs="tabs" id="tabs">
                 <li class="active">
                     <a data-toggle="tab" href="#odoo_notifications"><i class="mdi-social-notifications-on"/> Notification </a>
@@ -79,7 +77,7 @@
                     <a><i class="o_refresh fa fa-refresh"/></a>
                 </li>
                 <li>
-                    <a style="padding: 8px 10px 1px 5px;" id="o_mark_as_read"><i class="mdi-communication-clear-all" style="font-size: 25px;" title="Mark all as read"/></a>
+                    <a style="padding: 8px 10px 1px 5px;" id="o_mark_as_read"><i class="o_mark_all_as_read mdi-communication-clear-all" style="font-size: 25px;" title="Mark all as read"/></a>
                 </li>
                 <li>
                     <a data-toggle="tab" href="#yellow"><i class="fa fa-question-circle"/></a>
@@ -99,108 +97,63 @@
                 </div>
             </div>
         </div>
-        <!-- <t t-call="MessageList"></t> -->
-            
-        <!-- </div> -->
     </t>
 
     <t t-name="OdooNews">
-        <div class="panel panel-default" style="position: relative;">
-            <span class="mdi-action-bookmark" style="color:#21B799;position: absolute;z-index: 1;font-size: 29px;right: 2px;top: -3px;"/>
-            <div style="position: absolute; overflow: hidden; clip: rect(0px,auto,150px,0px);">
-                <img class="img img-responsive" src="https://www.odoo.com/website/image/ir.attachment/868557_8350146/datas"/>
-            </div>
-            <div class="panel-body" style="padding-top: 160px;">
-                <div>
-                    <div>
-                        <b>Odoo releases a new CRM mobile app</b>
-                    </div>
-                    <div>
-                        <small>One of the best CRM mobile apps on the market</small>
-                    </div>
-                    <small style="font-size: 11px;">
-                        <i class="mdi-social-person" style="font-size:11px;"/>Yves-Pascal Mukadi (ypm) 
-                        <i class="mdi-device-access-time" style="font-size:11px;"/>
-                        Thu Jan 22 2015 5:44 AM</small>
-                </div>
-            </div>
-        </div>
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <div>
-                    <div>
-                        <b>Odoo CMS: Form Builder</b>
-                    </div>
-                    <div>
-                        <small>Feedback from our crowdfunding campaign</small>
-                    </div>
-                    <small style="font-size: 11px;">
-                        <i class="mdi-social-person" style="font-size:11px;"/>Fabien Pinckaers (fp) 
-                        <i class="mdi-device-access-time" style="font-size:11px;"/>
-                        Thu Jan 22 2015 5:44 AM</small>
-                </div>
-            </div>
-        </div>
-        <div class="panel panel-default" style="position: relative;">
-            <div style="position: absolute; overflow: hidden; clip: rect(0px,auto,150px,0px);">
-                <img class="img img-responsive" src="https://www.odoo.com/website/image/ir.attachment/763023_207c8a0/datas"/>
-            </div>
-            <div class="panel-body" style="padding-top: 160px;">
-                <div>
-                    <div>
-                        <b>AdSpike, growth hacking web app to increase Adwords R.O.I.</b>
-                    </div>
-                    <div>
-                        <small>An innovative app to help marketers to reduce spending on Google Adwords</small>
-                    </div>
-                    <small style="font-size: 11px;">
-                        <i class="mdi-social-person" style="font-size:11px;"/>Yves-Pascal Mukadi (ypm) 
-                        <i class="mdi-device-access-time" style="font-size:11px;"/>
-                        Thu Jan 22 2015 5:44 AM</small>
-                </div>
-            </div>
-        </div>
+        <t t-foreach="widget.odoo_news" t-as="message">
+            <t t-call="Message"></t>
+        </t>
+        <t t-if="!widget.odoo_news.length">
+            <p class="text-center text-muted o_no_content"><b>No news available!</b></p>
+        </t>
     </t>
     <t t-name="MessageList">
+        <!-- Here MessageGroup is pushed through JavaScript -->
         <div class="o_message_screen">
-            <!-- <t t-foreach="widget.messages" t-as="message"> -->
-                <div class="text-muted" style="margin: 8px 0px;padding-bottom: 3px;font-weight: bold;color: #a24689;border-bottom: 1px solid lightgray;">Today 
-                    <span class="badge"><t t-esc="widget.messages.length"></t></span>
-                </div>
-                <t t-foreach="widget.messages" t-as="message">
-                    <div class="o_message panel panel-default" t-att-data-notification_id="message.notification_id">
-                        <div class="panel-body" style="position:relative;">
-                            <div class="o_panel_options">
-                                <span class="mdi-action-query-builder"/>
-                                <span class="o_remove_message mdi-action-done-all" t-att-data-notification_id="message.notification_id"/>
-                            </div>
-                            <div>
-                                <div style="max-width: 400px;">
-                                    <strong t-if="message.data.subject"><t t-raw="message.data.subject"></t></strong>
-                                    <strong t-if="message.data.record_name"><t t-raw="message.data.record_name"></t></strong>
-                                </div>
-                                <div>
-                                    <small><t t-raw="message.data.message"></t></small>
-                                </div>
-                                <small style="font-size: 11px;">
-                                    <t t-if="message.data.author_name">
-                                        <i class="mdi-social-person" style="font-size:11px;"/>
-                                        <t t-esc="message.data.author_name"></t>
-                                    </t>
-                                    <i class="mdi-device-access-time" style="font-size:11px;"/>
-                                    <span class="o_timeago" t-att-id="message.notification_id"></span></small>
-                            </div>
-                        </div>
-                    </div>
-                </t>
-            <!-- </t> -->
             <t t-if="!widget.messages.length">
                 <p class="text-center text-muted o_no_content"><b>Well done!</b><br/>Your inbox is empty.</p>
             </t>
-            <!-- Added footer here because on each refresh we also want to update the footer-->
-            <!-- <t t-call="GenericFooter"></t> -->
         </div>
     </t>
+
+    <t t-name="MessageGroup">
+        <div t-att-id="widget.name">
+            <div class="text-muted" style="margin: 8px 0px;padding-bottom: 3px;font-weight: bold;color: #a24689;border-bottom: 1px solid lightgray;"><t t-esc="widget.title"></t> 
+                <span class="badge"><t t-esc="widget.messages.length"></t></span>
+            </div>
+            <t t-foreach="widget.messages" t-as="message">
+                <t t-call="Message"></t>
+            </t>
+        </div>
+    </t>
+
+    <t t-name="Message">
+        <div class="o_message panel panel-default" t-att-data-notification_id="message.notification_id">
+            <div class="panel-body" style="position:relative;">
+                <div class="o_panel_options">
+                    <span class="mdi-action-query-builder"/>
+                    <span class="o_read_done mdi-action-done-all" t-att-data-notification_id="message.notification_id"/>
+                </div>
+                <div>
+                    <div style="max-width: 400px;">
+                        <strong t-if="message.data.subject"><t t-raw="message.data.subject"></t></strong>
+                        <strong t-if="message.data.record_name"><t t-raw="message.data.record_name"></t></strong>
+                    </div>
+                    <div>
+                        <small><t t-raw="message.data.message"></t></small>
+                    </div>
+                    <small style="font-size: 11px;">
+                        <t t-if="message.data.author_name">
+                            <i class="mdi-social-person" style="font-size:11px;"/>
+                            <t t-esc="message.data.author_name"></t>
+                        </t>
+                        <i class="mdi-device-access-time" style="font-size:11px;"/>
+                        <span class="o_timeago" t-att-id="message.notification_id"></span></small>
+                </div>
+            </div>
+        </div>
+    </t>
+
     <t t-name="GenericHeader">
         <div class="navbar navbar-inverse navbar-fixed-top" style="background-color: #a24689;">
             <div class="navbar-header">
