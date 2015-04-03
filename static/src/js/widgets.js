@@ -10,23 +10,29 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             //var background = chrome.extension.getBackgroundPage();
             //this.odoo_chrome_gcm_db = background.odoo_chrome_gcm_db_background;
             this.odoo_chrome_gcm_db = new odoo_chrome_gcm.odoo_chrome_gcm_db();
+            
         },
         start: function() {
             var self = this;
             this._super.apply(this, arguments);
             this.build_widgets();
-            this.check_session_and_key().done(function() {
-                //self.load_server_data().then(function() {
-                    self.screen_selector.default_screen = 'message_list_screen';
-                    self.screen_selector.set_default_screen();
-                //});
+            this.check_default_screen().done(function() {
+                self.screen_selector.default_screen = 'message_list_screen';
+                self.screen_selector.set_default_screen();
             }).fail(function() {
                 self.screen_selector.default_screen = 'register_screen';
                 self.screen_selector.set_default_screen();
             });
         },
-        session_is_valid: function(session) {
-            return !!session.uid;
+        check_default_screen: function() {
+            var self = this;
+            var messages = this.odoo_chrome_gcm_db.load('messages');
+            var def = $.Deferred();
+            if (messages.length) {
+                return def.resolve();
+            }
+            return this.check_session_and_key();
+
         },
         check_session_and_key: function() {
             var self = this;
@@ -36,26 +42,33 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             if (!origin) {
                 return def.reject();
             }
+            if (odoo_chrome_gcm.session && register_key) {
+                return def.resolve();
+            }
             var session = new openerp.Session(undefined, origin, {use_cors: true});
             session.on('error', this, this.rpc_error);
             session.session_reload().then(function() {
                 if (self.session_is_valid(session) && register_key) {
                     odoo_chrome_gcm.session = session;
-                    //TODO: Check is it really needed to call res.users and res.partner, we need partner for registering key, not more then that, while registering key we already reading partner, remove these calls will make extension screen initialization faster
-
-                    //Fetch partner if it is no there in session
-                    // new odoo_chrome_gcm.Model(odoo_chrome_gcm.session, "res.users")
-                    //     .call("read", [[odoo_chrome_gcm.session.uid], ['partner_id']]).done(
-                    //         function(partner) {
-                    //             odoo_chrome_gcm.session.partner = partner[0].partner_id;
-                    //             def.resolve();
-                    //     });
                     def.resolve();
                 } else {
                     def.reject();
                 }
             });
             return def;
+        },
+        on_session_exception: function() {
+            var self = this;
+            var error = {type: "Session Expired", title: "Session Expired", data: { message: _t("You do not have session with Odoo. You will be redirected to Login page.") }};
+            this.$dialog_box = $(QWeb.render('Crash.warning', {'error': error})).appendTo("body");
+            this.$dialog_box.on('hidden.bs.modal', this, function() {
+                self.$dialog_box.modal('hide');
+                self.screen_selector.set_current_screen('register_screen', {}, {}, true, false);
+            });
+            this.$dialog_box.modal('show');
+        },
+        session_is_valid: function(session) {
+            return !!session.uid;
         },
         build_widgets: function() {
             //Creates all widgets instances and add into this object
@@ -77,7 +90,6 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
         load_server_data: function(domains) {
             var self = this;
             var def = $.Deferred();
-            //Load data from mail object
             var notif_domain = [['is_read', '=', false]]
             _.each(domains, function(domain) {
                 notif_domain.push(domain);
@@ -103,7 +115,7 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
         },
         rpc_error: function(error) {
             if (error.data.name === "openerp.http.SessionExpiredException" || error.data.name === "werkzeug.exceptions.Forbidden") {
-                this.show_warning({type: "Session Expired", title: "Session Expired", data: { message: _t("Your Odoo session expired. Please refresh the current web page.") }});
+                this.on_session_exception();
                 return;
             }
             if (error.code == -32098) {
@@ -209,6 +221,7 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
     odoo_chrome_gcm.ScreenWidget = openerp.Widget.extend({
         //Base widget class, basically meant to show/hide particular screen
         init: function(parent, options) {
+            this.parent = parent;
             this._super(parent, options);
         },
         show: function() {
@@ -247,8 +260,13 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
                 }
             }
         },
+        check_session_and_key: function() {
+            return this.parent.check_session_and_key();
+        },
+        on_session_exception: function() {
+            return this.parent.on_session_exception();
+        },
         blockUI: function() {
-
             return $.blockUI.apply($, arguments);
         },
         unblockUI: function () {
@@ -271,7 +289,6 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             this.senderId = "186813708685";
             this.register_uri = "http://www.odoomobile.com/odoo_mobile/register";
             this.self_hosted = false;
-            //chrome.gcm.onMessage.addListener(this.on_message_receive);
         },
         start: function() {
             var self = this;
@@ -429,7 +446,6 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             this.main_widget = main_widget;
             this.odoo_chrome_gcm_db = db;
             this.messages = [];
-            //this.messages = this.odoo_chrome_gcm_db.load('messages');
         },
         start: function() {
             var self = this;
@@ -452,7 +468,6 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             _.each(this.odoo_news, function(message) {
                 if (message.data.date || message.data.receive_date) {
                     var $message_element = self.$el.find(".o_timeago#"+message.notification_id);
-                    console.log("timerelative is ::: ",message.data.receive_date);
                     var timerelative = $.timeago((message.data.date || message.data.receive_date));
                     $message_element.text(timerelative);
                 }
@@ -467,7 +482,6 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             var tomorrow_message_group = this.get_group(moment().add(1, 'days').format('YYYY-MM-DD'));
             tomorrow_message_group = tomorrow_message_group.length ? tomorrow_message_group[0] : [];
             var delayed_message_group = this.get_delayed(moment().format('YYYY-MM-DD'));
-            delayed_message_group = delayed_message_group.length ? delayed_message_group[0] : [];
             var upcoming_message_group = this.get_upcoming(moment().add(2, 'days').format('YYYY-MM-DD'))
             var someday_group = this.get_someday();
             var groups = [{'group_name': 'delayed', 'group_title': _t('Delayed'), 'messages': delayed_message_group}, {'group_name': 'today', 'group_title': _t('Today'), 'messages': today_message_group}, {'group_name': 'tomorrow', 'group_title': _t('Tomorrow'), 'messages': tomorrow_message_group}, {'group_name': 'up_coming', 'group_title': _t('Up coming'), 'messages': upcoming_message_group}, {'group_name': 'some_day', 'group_title': _t('Some Day'), 'messages': someday_group}]
@@ -485,8 +499,7 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
                     return message.data.mtype;
                 }).value();
             _.map(type_grouped_messages, function(type_group, type) {
-                var key = type == 'undefined' ? 'user' : type;
-                console.log("key is ::: ", key);
+                var key = (type == 'undefined' ? 'user' : type);
                 grouped_messages[key] = _(type_group).groupBy(function(group) {
                     return (group.data.receive_date).substring(0, 10);
                 });
@@ -504,7 +517,7 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             var upcoming_messages = [];
             _.each(this.message_groups.user, function(message_group, key) {
                 if (moment(key).isAfter(moment(date))) {
-                    upcoming_messages.concat(message_group);
+                    upcoming_messages = upcoming_messages.concat(message_group);
                 }
             });
             return upcoming_messages;
@@ -513,7 +526,7 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             var delayed_messages = [];
             _.each(this.message_groups.user, function(message_group, key) {
                 if (moment(key).isBefore(moment(date))) {
-                    delayed_messages.concat(message_group);
+                    delayed_messages = delayed_messages.concat(message_group);
                 }
             });
             return delayed_messages;
@@ -522,7 +535,7 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             var someday_messages = [];
             _.each(this.message_groups.user, function(message_group, key) {
                 if (moment(key) == undefined || moment(key) == 'undefined') {
-                    someday_messages.concat(message_group);
+                    someday_messages = someday_messages.concat(message_group);
                 }
             });
             return someday_messages;
@@ -536,21 +549,25 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             var message_ids = _.map(this.odoo_chrome_gcm_db.load('messages'), function(message) {
                 return message.data.message_id;
             });
-            new odoo_chrome_gcm.Model(odoo_chrome_gcm.session, "mail.notification")
-                .call("search", [[['message_id', 'in', message_ids]]]).done(function(notification_ids) {
-                        if (notification_ids.length) {
-                            self.set_notification_as_read(notification_ids).done(function(result) {
+            this.check_session_and_key().done(function() {
+                new odoo_chrome_gcm.Model(odoo_chrome_gcm.session, "mail.notification")
+                    .call("search", [[['message_id', 'in', message_ids]]]).done(function(notification_ids) {
+                            if (notification_ids.length) {
+                                self.set_notification_as_read(notification_ids).done(function(result) {
+                                    def.resolve();
+                                });
+                            } else {
                                 def.resolve();
-                            });
-                        } else {
-                            def.resolve();
-                        }
+                            }
+                });
+                $.when(def).done(function() {
+                    self.odoo_chrome_gcm_db.remove_all_msg();
+                    self.messages = self.odoo_chrome_gcm_db.load('messages');
+                    self.reload_screen();
+                });
+            }).fail(function() {
+                return self.on_session_exception();
             });
-            $.when(def).done(function() {
-                self.odoo_chrome_gcm_db.remove_all_msg();
-                self.messages = self.odoo_chrome_gcm_db.load('messages');
-                self.reload_screen();
-            })
         },
         on_stop_notification: function() {
             console.log("Here Inside stop notification ");
@@ -560,19 +577,22 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
         },
         on_refresh: function(e) {
             var self = this;
-            self.blockUI();
-            $(e.currentTarget).addClass('fa-spin');
             var messages = this.odoo_chrome_gcm_db.load('messages');
             var available_message_ids = _.map(messages, function(message) {
                 return message.data.id;
             });
             var domain = [['message_id', 'not in', available_message_ids]]
-            self.main_widget.load_server_data(domain).then(function() {
-                $.unblockUI();
-                $(e.currentTarget).removeClass('fa-spin');
-                self.reload_screen();
+            this.check_session_and_key().done(function() {
+                self.blockUI();
+                $(e.currentTarget).addClass('fa-spin');
+                self.main_widget.load_server_data(domain).then(function() {
+                    $.unblockUI();
+                    $(e.currentTarget).removeClass('fa-spin');
+                    self.reload_screen();
+                });
+            }).fail(function() {
+                return self.on_session_exception();
             });
-            
         },
     });
 
@@ -593,6 +613,7 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
         start: function() {
             var self = this;
             this._super.apply(this, arguments);
+            console.log("this.messages is ::: ", this.messages);
             _.each(this.messages, function(message) {
                 if (message.data.date) {
                     var $message_element = self.$el.find(".o_timeago#"+message.notification_id);
@@ -615,22 +636,26 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             var def = $.Deferred();
             var notification_id = $(e.currentTarget).data("notification_id");
             var message = this.odoo_chrome_gcm_db.get_msg_by_notif_id(notification_id);
-            console.log("set_notification_as_read is ::: ", message);
-            new odoo_chrome_gcm.Model(odoo_chrome_gcm.session, "mail.notification")
-                .call("search", [[['message_id', '=', message.data.message_id]]]).done(function(notification_ids) {
-                        if (notification_ids.length) {
-                            self.parent.set_notification_as_read(notification_ids).done(function(result) {
+            console.log("odoo_chrome_gcm.session are ::: ", odoo_chrome_gcm.session);
+            this.parent.check_session_and_key().done(function () {
+                new odoo_chrome_gcm.Model(odoo_chrome_gcm.session, "mail.notification")
+                    .call("search", [[['message_id', '=', message.data.message_id]]]).done(function(notification_ids) {
+                            if (notification_ids.length) {
+                                self.parent.set_notification_as_read(notification_ids).done(function(result) {
+                                    def.resolve();
+                                });
+                            } else {
                                 def.resolve();
-                            });
-                        } else {
-                            def.resolve();
-                        }
-            });
-            $.when(def).done(function() {
-                self.messages = self.remove_msg_by_notif_id(notification_id);
-                self.odoo_chrome_gcm_db.remove_msg_by_notif_id(notification_id);
-                //TODO: Do not reload screen, just remove it from DOM
-                self.reload_group();
+                            }
+                });
+                $.when(def).done(function() {
+                    self.messages = self.remove_msg_by_notif_id(notification_id);
+                    self.odoo_chrome_gcm_db.remove_msg_by_notif_id(notification_id);
+                    //TODO: Do not reload screen, just remove it from DOM
+                    self.reload_group();
+                });
+            }).fail(function() {
+                return self.parent.on_session_exception();
             });
         },
         remove_msg_by_notif_id: function(notification_id) {
