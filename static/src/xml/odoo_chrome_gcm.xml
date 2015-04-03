@@ -111,7 +111,7 @@
         <!-- Here MessageGroup is pushed through JavaScript -->
         <div class="o_message_screen">
             <t t-if="!widget.messages.length">
-                <p class="text-center text-muted o_no_content"><b>Well done!</b><br/>Your inbox is empty.</p>
+                <p class="text-center text-muted o_no_content"><b>Good Job !</b><br/>Your inbox is empty.</p>
             </t>
         </div>
     </t>

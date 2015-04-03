@@ -23,9 +23,9 @@ body {
     margin-top: 5px;
 }
 .o_message {
-    margin-bottom: 5px !important;
-    margin-left: -5px !important;
-    margin-right: -5px !important;
+    margin-bottom: 15px !important;
+    margin-left: 0px !important;
+    margin-right: 0px !important;
     padding: 10px 10px 10px 10px !important;
     cursor: pointer;
     overflow-x: hidden;
