@@ -623,7 +623,7 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             });
         },
         on_message_click: function(e) {
-            if ($(e.target).hasClass('o_read_done')) {
+            if ($(e.target).hasClass('o_read_done') || $(e.target).hasClass('mdi-action-query-builder')) {
                 return;
             }
             var notification_id = $(e.currentTarget).data("notification_id");

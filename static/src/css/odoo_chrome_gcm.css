@@ -28,7 +28,15 @@ body {
     margin-right: 0px !important;
     padding: 10px 10px 10px 10px !important;
     cursor: pointer;
-    overflow-x: hidden;
+}
+.o_message .dropdown-menu {
+  left: -150px;
+}
+.o_message .btn-group, .o_message .btn-group-vertical {
+  position: relative;
+  border-radius: 0px;
+  margin: 0px;
+  box-shadow:none;
 }
 .o_gcm_register_key {
     background-color: #a24689 !important;
@@ -88,4 +96,8 @@ div.panel-body > div > small{
 }
 ::-webkit-scrollbar { 
         display: none; 
+}
+
+#today .move_today,#tomorrow .move_tomorrow{
+    display: none;
 }

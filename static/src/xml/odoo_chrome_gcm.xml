@@ -133,7 +133,16 @@
         <div class="o_message panel panel-default" t-att-data-notification_id="message.notification_id">
             <div class="panel-body" style="position:relative;word-wrap: break-word;">
                 <div class="o_panel_options">
-                    <span class="mdi-action-query-builder"/>
+                    <div class="btn-group">
+                        <span data-target="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="mdi-action-query-builder"/><div class="ripple-wrapper"></div></span>
+                        <ul class="dropdown-menu">
+                            <li><small class="text-muted" style="padding-left: 20px;">Move to</small></li>
+                            <li><a href="javascript:void(0)" class="move_today">Today</a></li>
+                            <li><a href="javascript:void(0)" class="move_tomorrow">Tomorrow</a></li>
+                            <li><a href="javascript:void(0)" class="move_next_week">Next Week</a></li>
+                            <li><a href="javascript:void(0)" class="move_later">Some Day Later</a></li>
+                        </ul>
+                    </div>
                     <span class="o_read_done mdi-action-done-all" t-att-data-notification_id="message.notification_id"/>
                 </div>
                 <div>
