@@ -26,8 +26,9 @@ body {
     margin-bottom: 15px !important;
     margin-left: 0px !important;
     margin-right: 0px !important;
-    padding: 10px 10px 10px 10px !important;
+    padding: 10px 10px 10px 0px !important;
     cursor: pointer;
+    border-left: 6px solid lightseagreen;
 }
 .o_message .dropdown-menu {
   left: -150px;
@@ -64,7 +65,7 @@ body {
 .o_tab_content{
     padding: 50px 10px 10px 10px;
     background:#EEEEEE;
-    min-height: 350px;
+    min-height: 1200px;
 }
 .o_group_row{
     margin: 8px 0px;
