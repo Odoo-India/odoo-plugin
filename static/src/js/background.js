@@ -67,4 +67,4 @@ chrome.gcm.onMessage.addListener(on_message_receive);
 chrome.notifications.onClicked.addListener(on_message_click);
 chrome.notifications.onClosed.addListener(on_message_close);
 
-//setTimeout(function() {on_message_receive({data: {'subject': "Test Message", 'message': 'Hi, this is test message \n Testing message list', 'res_id': 1, 'model': 'sale.order', 'author_id': 1, 'author_name': "Administrator", 'date': moment().format("YYYY-MM-DD HH:MM:SS")}}), 3000});
+setTimeout(function() {on_message_receive({data: {'subject': "Test Message", 'message': 'Hi, this is test message \n Testing message list', 'res_id': 1, 'model': 'sale.order', 'author_id': 1, 'author_name': "Administrator", 'date': moment().subtract(1, 'days').format("YYYY-MM-DD HH:MM:SS"), 'mtype': 'user', 'receive_date': moment().subtract(1, 'days').format("YYYY-MM-DD HH:MM:SS")}}), 3000});

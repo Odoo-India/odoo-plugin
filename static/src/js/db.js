@@ -56,5 +56,11 @@ function odoo_chrome_gcm_db(odoo_chrome_gcm) {
         remove_all_msg: function() {
             this.save('messages', []);
         },
+        change_messsage_date: function(notification_id, date) {
+            message = this.get_msg_by_notif_id(notification_id);
+            console.log("message is ::: ", message, date);
+            message.data.receive_date = date;
+            this.save_mesages('messages', message);
+        },
     });
 }
