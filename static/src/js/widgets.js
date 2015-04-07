@@ -595,7 +595,7 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             var self = this;
             var messages = this.odoo_chrome_gcm_db.load('messages');
             var available_message_ids = _.map(messages, function(message) {
-                return message.data.id;
+                return message.data.message_id;
             });
             var domain = [['message_id', 'not in', available_message_ids]]
             this.check_session_and_key().done(function() {

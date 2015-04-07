@@ -92,7 +92,7 @@
                 </div>
                 <div class="tab-pane" id="yellow">
                     <div class="text-center">
-                        <img class="img img-responsive" src="static/img/logo2.png"/>
+                        <img class="img img-responsive" src="static/img/logo2.png" style="margin: auto;"/>
                     </div>
                 </div>
             </div>
@@ -154,23 +154,34 @@
                     <span class="o_read_done mdi-action-done-all" t-att-data-notification_id="message.notification_id"/>
                 </div>
                 <div>
-                    <div style="max-width: 350px;">
+                    <div style="max-width: 310px;">
                         <strong t-if="message.data.subject"><t t-raw="message.data.subject"></t></strong>
                         <strong t-if="message.data.record_name"><t t-raw="message.data.record_name"></t></strong>
                     </div>
-                    <div>
+                    <div style="margin-top: 5px;">
+                      <div>
                         <small><t t-raw="message.data.message"></t></small>
+                      </div>
                     </div>
-                    <small style="font-size: 11px;">
-                        <i class="mdi-social-person" style="font-size:11px;"/>
+                    <small style="font-size: 11.5px;display: block;margin-top: 5px;">
+                      <span>
+                        <i class="mdi-social-person" style="color:#000000"/>
                         <t t-if="message.data.author_name">
                             <t t-esc="message.data.author_name"></t>
                         </t>
                         <t t-if="!message.data.author_name">
                             <span>Odoo</span>
                         </t>
-                        <i class="mdi-device-access-time" style="font-size:11px;"/>
-                        <span class="o_timeago" t-att-id="message.notification_id"></span></small>
+                      </span>
+                      <span>
+                        <i class="mdi-device-access-time" style="color:#000000"/>
+                        <span class="o_timeago" t-att-id="message.notification_id"></span>
+                      </span>
+                      <span style="color:lightcoral;float: right;">
+                        <i class="mdi-communication-email" />
+                        <span>+3 more</span>
+                      </span>
+                    </small>
                 </div>
             </div>
         </div>
