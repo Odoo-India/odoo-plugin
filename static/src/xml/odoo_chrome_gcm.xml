@@ -177,9 +177,9 @@
                         <i class="mdi-device-access-time" style="color:#000000"/>
                         <span class="o_timeago" t-att-id="message.notification_id"></span>
                       </span>
-                      <span style="color:lightcoral;float: right;">
+                      <span t-if="message.count - 1" style="color:lightcoral;float: right;">
                         <i class="mdi-communication-email" />
-                        <span>+3 more</span>
+                        <span>+<t t-esc="message.count - 1"></t>more</span>
                       </span>
                     </small>
                 </div>
