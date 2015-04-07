@@ -28,7 +28,6 @@ body {
     margin-right: 0px !important;
     padding: 10px 10px 10px 0px !important;
     cursor: pointer;
-    border-left: 6px solid lightseagreen;
 }
 .o_message .dropdown-menu {
   left: -150px;
@@ -101,4 +100,29 @@ div.panel-body > div > small{
 
 #today .move_today,#tomorrow .move_tomorrow{
     display: none;
+}
+
+.o_change_color > div {
+  padding: 4px 0px;
+  text-align: center;
+  color:  rgba(0, 0, 0, 0.4) !important;
+}
+
+.card_green{
+      border-left: 6px solid lightseagreen;
+}
+.card_red{
+      border-left: 6px solid #e74c3c;
+}
+.card_yellow{
+      border-left: 6px solid #f39c12;
+}
+.card_gray{
+      border-left: 6px solid #7f8c8d;
+}
+.o_change_color i.fa{
+    visibility: hidden;
+}
+.card_green [data-color-class="card_green"] i,.card_yellow [data-color-class="card_yellow"] i,.card_red [data-color-class="card_red"] i,.card_gray [data-color-class="card_gray"] i{
+      visibility: visible;
 }

@@ -107,7 +107,7 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
         prepare_and_load_server_data: function(messages) {
             var self = this;
             _.each(messages, function(message) {
-                self.odoo_chrome_gcm_db.save_mesages('messages', {'data': { 'subject': message.subject, 'message': message.body, 'record_name': message.record_name, 'res_id': message.res_id, 'model': message.model, 'author_id': message.author_id[0], 'author_name': message.author_id[1], 'date': message.date,'url': self.get_url(message), 'message_id': message.id, 'is_read': false, 'receive_date': (moment(message.date).format("YYYY-MM-DD HH:MM:SS") || moment().format("YYYY-MM-DD HH:MM:SS")), 'mtype': 'user' }, 'notification_id': self.odoo_chrome_gcm_db.getNotificationId()})
+                self.odoo_chrome_gcm_db.save_mesages('messages', {'data': { 'subject': message.subject, 'message': message.body, 'record_name': message.record_name, 'res_id': message.res_id, 'model': message.model, 'author_id': message.author_id[0], 'author_name': message.author_id[1], 'date': message.date,'url': self.get_url(message), 'message_id': message.id, 'is_read': false, 'receive_date': (moment(message.date).format("YYYY-MM-DD HH:MM:SS") || moment().format("YYYY-MM-DD HH:MM:SS")), 'mtype': 'user','color_class':'card_green' }, 'notification_id': self.odoo_chrome_gcm_db.getNotificationId()})
             });
         },
         get_url: function(message) {
@@ -620,7 +620,8 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
         events: {
             "click .o_message": "on_message_click",
             "click .o_read_done": "on_read_done",
-            "click .o_move_record": "on_move_record"
+            "click .o_move_record": "on_move_record",
+            "click .o_change_color": "on_change_color"
         },
         init: function(parent, group) {
             this.parent = parent;
@@ -643,8 +644,16 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             var notification_id = $target.data('notification_id');
             this.parent.move_record(notification_id, source_group, destination_group);
         },
+        on_change_color: function(e) {
+            e.stopPropagation();
+            var $target = $(e.currentTarget);
+            var message = this.odoo_chrome_gcm_db.get_msg_by_notif_id($target.data('notification_id'));
+            $target.parents('.o_message').removeClass(message.data.color_class).addClass($target.data('color-class'));
+            message.data.color_class = $target.data('color-class');
+            this.odoo_chrome_gcm_db.save_mesages('messages', message);
+        },
         on_message_click: function(e) {
-            if ($(e.target).hasClass('o_read_done') || $(e.target).hasClass('mdi-action-query-builder')) {
+            if ($(e.target).hasClass('o_read_done') || $(e.target).hasClass('mdi-action-query-builder') || $(e.target).hasClass('mdi-action-invert-colors')) {
                 return;
             }
             var notification_id = $(e.currentTarget).data("notification_id");
