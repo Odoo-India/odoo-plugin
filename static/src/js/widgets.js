@@ -589,9 +589,6 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
                 return self.on_session_exception();
             });
         },
-        on_stop_notification: function() {
-            console.log("Here Inside stop notification ");
-        },
         reload_screen: function() {
             this.main_widget.screen_selector.set_current_screen("message_list_screen", {}, {}, true, true);
         },

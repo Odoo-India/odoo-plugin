@@ -1,33 +1,15 @@
-body {
-    //padding-top: 60px;
-}
 .o_hidden {
-    display: none !important;
+  display: none !important;
 }
 .o_active {
-    display: block !important;
-}
-.o_footer {
-    color: #FFFFFF;
-    padding-top: 5px;
-    padding-left: 5px;
-    //padding-bottom: 50px;
-}
-.o_forum .mt5 {
-    margin-top: 5px;
-}
-.o_forum .ml5 {
-    margin-left: 5px;
-}
-.o_message:first {
-    margin-top: 5px;
+  display: block !important;
 }
 .o_message {
-    margin-bottom: 15px !important;
-    margin-left: 0px !important;
-    margin-right: 0px !important;
-    padding: 10px 10px 10px 0px !important;
-    cursor: pointer;
+  margin-bottom: 15px !important;
+  margin-left: 0px !important;
+  margin-right: 0px !important;
+  padding: 10px 10px 10px 0px !important;
+  cursor: pointer;
 }
 .o_message .dropdown-menu {
   left: -150px;
@@ -39,67 +21,62 @@ body {
   box-shadow:none;
 }
 .o_gcm_register_key {
-    background-color: #a24689 !important;
+  background-color: #a24689 !important;
 }
 .o_login {
-    padding: 20px !important;
-}
-.o_message_screen {
-    //margin-top: 60px !important;
+  padding: 20px !important;
 }
 .o_no_content {
-    color: #777777;
-    padding-top: 25px;
-    font-size: 125%;
+  color: #777777;
+  padding-top: 25px;
+  font-size: 125%;
 }
 
-/* New style stuff */
-.o_header_nav_tabs{
-    background: #fff;
-    position: fixed;
-    z-index: 1000;
-    width: 100%;
-    box-shadow:0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px rgba(0, 0, 0, 0.16);
+.o_header_nav_tabs {
+  background: #fff;
+  position: fixed;
+  z-index: 1000;
+  width: 100%;
+  box-shadow:0 3px 10px rgba(0, 0, 0, 0.23), 0 3px 10px rgba(0, 0, 0, 0.16);
 }
-.o_tab_content{
-    padding: 50px 10px 10px 10px;
-    background:#EEEEEE;
-    min-height: 1200px;
+.o_tab_content {
+  padding: 50px 10px 10px 10px;
+  background:#EEEEEE;
+  min-height: 1200px;
 }
-.o_group_row{
-    margin: 8px 0px;
-    padding-bottom: 3px;
-    font-weight: bold;
-    border-bottom: 1px solid lightgray;
-    color: #a24689;
+.o_group_row {
+  margin: 8px 0px;
+  padding-bottom: 3px;
+  font-weight: bold;
+  border-bottom: 1px solid lightgray;
+  color: #a24689;
 }
-.o_group_row_danger{
-    color: #F44336;
+.o_group_row_danger {
+  color: #F44336;
 }
-.o_panel_options{
-    position: absolute;
-    right: 10px;top: 10px;
-    font-size: 17px;
+.o_panel_options {
+  position: absolute;
+  right: 10px;top: 10px;
+  font-size: 17px;
 }
-.nav-tabs>li>a, .nav-tabs>li>a:hover, .nav-tabs>li>a:focus {
+.nav-tabs > li > a, .nav-tabs > li > a:hover, .nav-tabs > li > a:focus {
   color: #a24689 !important;
 }
-.nav-tabs li.active, .nav-tabs>li.active>a{
-    background: #a24689;
-    color: #fff !important;
+.nav-tabs li.active, .nav-tabs > li.active > a {
+  background: #a24689;
+  color: #fff !important;
 }
 .badge{
-    background-color: #21B799;
+  background-color: #21B799;
 }
-div.panel-body > div > small{
-    color: rgb(194, 192, 192);
+div.panel-body > div > small {
+  color: rgb(194, 192, 192);
 }
-::-webkit-scrollbar { 
-        display: none; 
+.o_mark_all_as_read, .o_refresh {
+  cursor: pointer;
 }
-
-#today .move_today,#tomorrow .move_tomorrow{
-    display: none;
+#today .move_today,#tomorrow .move_tomorrow {
+  display: none;
 }
 
 .o_change_color > div {
@@ -108,21 +85,21 @@ div.panel-body > div > small{
   color:  rgba(0, 0, 0, 0.4) !important;
 }
 
-.card_green{
-      border-left: 6px solid lightseagreen;
+.card_green {
+  border-left: 6px solid lightseagreen;
 }
-.card_red{
-      border-left: 6px solid #e74c3c;
+.card_red {
+  border-left: 6px solid #e74c3c;
 }
-.card_yellow{
-      border-left: 6px solid #f39c12;
+.card_yellow {
+  border-left: 6px solid #f39c12;
 }
 .card_gray{
-      border-left: 6px solid #7f8c8d;
+  border-left: 6px solid #7f8c8d;
 }
-.o_change_color i.fa{
-    visibility: hidden;
+.o_change_color i.fa {
+  visibility: hidden;
 }
-.card_green [data-color-class="card_green"] i,.card_yellow [data-color-class="card_yellow"] i,.card_red [data-color-class="card_red"] i,.card_gray [data-color-class="card_gray"] i{
-      visibility: visible;
+.card_green [data-color-class="card_green"] i,.card_yellow [data-color-class="card_yellow"] i,.card_red [data-color-class="card_red"] i,.card_gray [data-color-class="card_gray"] i {
+  visibility: visible;
 }

@@ -132,7 +132,7 @@
     <t t-name="Message">
         <div t-attf-class="o_message panel panel-default #{ message.data.color_class or 'card_green' }" t-att-data-notification_id="message.notification_id">
             <div class="panel-body" style="position:relative;word-wrap: break-word;">
-                <div class="o_panel_options">
+                <div class="pull-right o_panel_options">
                     <div class="btn-group">
                         <span data-target="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="mdi-action-invert-colors"/><div class="ripple-wrapper"></div></span>
                         <ul class="dropdown-menu" style="min-width:80px;left: -60px;">
@@ -170,7 +170,7 @@
                     </div>
                     <span class="o_read_done mdi-action-done-all" t-att-data-notification_id="message.notification_id"/>
                 </div>
-                <div>
+                <div clas="pull-left">
                     <div style="max-width: 310px;">
                         <strong t-if="message.data.subject"><t t-raw="message.data.subject"></t></strong>
                         <strong t-if="message.data.record_name"><t t-raw="message.data.record_name"></t></strong>
