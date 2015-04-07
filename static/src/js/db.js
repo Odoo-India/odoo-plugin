@@ -21,16 +21,11 @@ function odoo_chrome_gcm_db(odoo_chrome_gcm) {
         },
         //Create save_message and save_messages two methods
         save_mesages: function(name, message) {
-            //To load data from localstorage
-            var data = localStorage[name];
-            if (data !== undefined && data !== "") {
-                data = JSON.parse(data);
-                data;
-            } else {
-                data = [];
-            }
+            var data = this.load(name, []);
+            console.log("Inside save_mesages ::: ");
             for(var i = 0, len = data.length; i < len; i++) {
                 if(data[i].data.message_id == message.data.message_id) {
+                    console.log("Inside iffff ", data[i].data.message_id, message.data.message_id);
                     _.extend(data[i], message);
                     this.save('messages',data);
                     return;

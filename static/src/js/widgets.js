@@ -465,13 +465,7 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             delete this.message_groups.odoo;
             this.replaceElement(QWeb.render(this.template, {widget: this}));
             var res_super = this._super.apply(this, arguments);
-            _.each(this.odoo_news, function(message) {
-                if (message.data.date || message.data.receive_date) {
-                    var $message_element = self.$el.find(".o_timeago#"+message.notification_id);
-                    var timerelative = $.timeago((message.data.date || message.data.receive_date));
-                    $message_element.text(timerelative);
-                }
-            });
+            this.do_apply_timeago(this.odoo_news);
             this.render_groups();
             return res_super;
         },
@@ -543,7 +537,6 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             return someday_messages;
         },
         move_record: function(notification_id, source, destination) {
-            console.log("notification_id is :: ", this.record_groups);
             var source_group = _(this.record_groups).find(function(group) { return group.name == source;});
             var destination_group = _(this.record_groups).find(function(group) { return group.name == destination; });
             //Pop message from source group, change its date and push on top on destination group
@@ -555,6 +548,16 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             destination_group.messages.unshift(message);
             source_group.reload_group();
             destination_group.reload_group();
+        },
+        do_apply_timeago: function(messages) {
+            var self = this;
+            _.each(messages, function(message) {
+                if (message.data.date || message.data.receive_date) {
+                    var $message_element = self.$el.find(".o_timeago#"+message.notification_id);
+                    var timerelative = $.timeago((message.data.date || message.data.receive_date));
+                    $message_element.text(timerelative);
+                }
+            });
         },
         set_notification_as_read: function(notification_ids) {
             return new odoo_chrome_gcm.Model(odoo_chrome_gcm.session, "mail.notification").call("write", [notification_ids, {'is_read': true}]);
@@ -630,14 +633,7 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
         start: function() {
             var self = this;
             this._super.apply(this, arguments);
-            console.log("this.messages is ::: ", this.messages);
-            _.each(this.messages, function(message) {
-                if (message.data.date) {
-                    var $message_element = self.$el.find(".o_timeago#"+message.notification_id);
-                    var timerelative = $.timeago((message.data.date || message.data.receive_date));
-                    $message_element.text(timerelative);
-                }
-            });
+            this.parent.do_apply_timeago(this.messages);
         },
         on_move_record: function(e) {
             e.stopPropagation();
@@ -661,7 +657,6 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             var def = $.Deferred();
             var notification_id = $(e.currentTarget).data("notification_id");
             var message = this.odoo_chrome_gcm_db.get_msg_by_notif_id(notification_id);
-            console.log("odoo_chrome_gcm.session are ::: ", odoo_chrome_gcm.session);
             this.parent.check_session_and_key().done(function () {
                 new odoo_chrome_gcm.Model(odoo_chrome_gcm.session, "mail.notification")
                     .call("search", [[['message_id', '=', message.data.message_id]]]).done(function(notification_ids) {
@@ -691,16 +686,9 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
         reload_group: function() {
             var self = this;
             var $temp = QWeb.render(this.template, { widget: this });
-            console.log("this.$el.find(+this.name) is ", this.$el.find("#"+this.name));
             //$("#"+this.name).replaceWith($temp);
             this.replaceElement(QWeb.render(this.template, {widget: this}));
-            _.each(this.messages, function(message) {
-                if (message.data.date) {
-                    var $message_element = self.$el.find(".o_timeago#"+message.notification_id);
-                    var timerelative = $.timeago((message.data.date || message.data.receive_date));
-                    $message_element.text(timerelative);
-                }
-            });
+            this.parent.do_apply_timeago(this.messages);
         },
     });
 }
