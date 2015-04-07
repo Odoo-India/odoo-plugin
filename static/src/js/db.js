@@ -36,7 +36,7 @@ function odoo_chrome_gcm_db(odoo_chrome_gcm) {
                         message.count = 1;
                     }
                     _.extend(data[i], message);
-                    save('messages',data);
+                    this.save('messages',data);
                     return;
                 }
             }

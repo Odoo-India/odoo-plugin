@@ -170,8 +170,8 @@
                     </div>
                     <span class="o_read_done mdi-action-done-all" t-att-data-notification_id="message.notification_id"/>
                 </div>
-                <div clas="pull-left">
-                    <div style="max-width: 310px;">
+                <div>
+                    <div style="max-width: 290px;">
                         <strong t-if="message.data.subject"><t t-raw="message.data.subject"></t></strong>
                         <strong t-if="message.data.record_name"><t t-raw="message.data.record_name"></t></strong>
                     </div>
