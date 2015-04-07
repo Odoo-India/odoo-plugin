@@ -554,7 +554,8 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             _.each(messages, function(message) {
                 if (message.data.date || message.data.receive_date) {
                     var $message_element = self.$el.find(".o_timeago#"+message.notification_id);
-                    var timerelative = $.timeago((message.data.date || message.data.receive_date));
+                    var date = message.data.date ? odoo_chrome_gcm.str_to_datetime(message.data.date) : odoo_chrome_gcm.str_to_datetime(message.data.receive_date);
+                    var timerelative = $.timeago((date));
                     $message_element.text(timerelative);
                 }
             });

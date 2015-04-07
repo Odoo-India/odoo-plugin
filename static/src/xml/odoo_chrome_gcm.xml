@@ -130,23 +130,23 @@
     </t>
 
     <t t-name="Message">
-        <div t-att-class="'o_message panel panel-default '+ message.data.color_class" t-att-data-notification_id="message.notification_id">
+        <div t-attf-class="o_message panel panel-default #{ message.data.color_class or 'card_green' }" t-att-data-notification_id="message.notification_id">
             <div class="panel-body" style="position:relative;word-wrap: break-word;">
                 <div class="o_panel_options">
                     <div class="btn-group">
                         <span data-target="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="mdi-action-invert-colors"/><div class="ripple-wrapper"></div></span>
                         <ul class="dropdown-menu" style="min-width:80px;left: -60px;">
                             <li>
-                                <a href="javascript:void(0);" t-att-data-notification_id="message.notification_id" t-att-data-source-group="widget.name" data-color-class="card_green" class="o_change_color"><div style="background-color:lightseagreen;"><i class="fa fa-check"></i></div></a>
+                                <a href="#" t-att-data-notification_id="message.notification_id" t-att-data-source-group="widget.name" data-color-class="card_green" class="o_change_color"><div style="background-color:lightseagreen;"><i class="fa fa-check"></i></div></a>
                             </li>
                             <li>
-                                <a href="javascript:void(0);" t-att-data-notification_id="message.notification_id" t-att-data-source-group="widget.name" data-color-class="card_red" class="o_change_color"><div style="background-color:#e74c3c;"><i class="fa fa-check"></i></div></a>
+                                <a href="#" t-att-data-notification_id="message.notification_id" t-att-data-source-group="widget.name" data-color-class="card_red" class="o_change_color"><div style="background-color:#e74c3c;"><i class="fa fa-check"></i></div></a>
                             </li>
                             <li>
-                                <a href="javascript:void(0);" t-att-data-notification_id="message.notification_id" t-att-data-source-group="widget.name" data-color-class="card_yellow" class="o_change_color"><div style="background-color:#f39c12;"><i class="fa fa-check"></i></div></a>
+                                <a href="#" t-att-data-notification_id="message.notification_id" t-att-data-source-group="widget.name" data-color-class="card_yellow" class="o_change_color"><div style="background-color:#f39c12;"><i class="fa fa-check"></i></div></a>
                             </li>
                             <li>
-                                <a href="javascript:void(0);" t-att-data-notification_id="message.notification_id" t-att-data-source-group="widget.name" data-color-class="card_gray" class="o_change_color"><div style="background-color:#7f8c8d;"><i class="fa fa-check"></i></div></a>
+                                <a href="#" t-att-data-notification_id="message.notification_id" t-att-data-source-group="widget.name" data-color-class="card_gray" class="o_change_color"><div style="background-color:#7f8c8d;"><i class="fa fa-check"></i></div></a>
                             </li>
                         </ul>
                     </div>
