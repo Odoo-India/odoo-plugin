@@ -22,7 +22,7 @@ function odoo_chrome_gcm_db(odoo_chrome_gcm) {
         //Create save_message and save_messages two methods
         save_mesages: function(name, message) {
             var data = this.load(name, []);
-            console.log("Inside save_mesages ::: ", message);
+            message.count = 1;
             for(var i = 0, len = data.length; i < len; i++) {
                 if(data[i].data.message_id == message.data.message_id) {
                     _.extend(data[i], message);
@@ -32,8 +32,6 @@ function odoo_chrome_gcm_db(odoo_chrome_gcm) {
                 if (data[i].data.res_id == message.data.res_id && data[i].data.model == message.data.model) {
                     if (message.count) {
                         message.count += 1;
-                    } else {
-                        message.count = 1;
                     }
                     _.extend(data[i], message);
                     this.save('messages',data);
@@ -65,6 +63,9 @@ function odoo_chrome_gcm_db(odoo_chrome_gcm) {
             console.log("message is ::: ", message, date);
             message.data.receive_date = date;
             this.save_mesages('messages', message);
+        },
+        clear_storage: function() {
+            localStorage.clear();
         },
     });
 }

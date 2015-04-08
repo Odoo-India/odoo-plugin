@@ -439,6 +439,7 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
         template: 'MessageListScreen',
         events: {
             "click .o_refresh": "on_refresh",
+            "click .o_signout": "on_signout",
             "click .o_mark_all_as_read": "on_mark_all_as_read",
         },
         init: function(main_widget, db) {
@@ -611,6 +612,10 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
                 return self.on_session_exception();
             });
         },
+        on_signout: function() {
+            this.odoo_chrome_gcm_db.clear_storage();
+            this.main_widget.screen_selector.set_current_screen("register_screen", {}, {}, true, true);
+        },
     });
 
     odoo_chrome_gcm.MessageGroup = openerp.Widget.extend({
@@ -696,6 +701,13 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             //$("#"+this.name).replaceWith($temp);
             this.replaceElement(QWeb.render(this.template, {widget: this}));
             this.parent.do_apply_timeago(this.messages);
+        },
+        get_group_count: function() {
+            var count = 0;
+            _.each(this.messages, function(message) {
+                count += message.count;
+            });
+            return count;
         },
     });
 }

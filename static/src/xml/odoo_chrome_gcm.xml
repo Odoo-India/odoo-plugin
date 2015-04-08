@@ -3,7 +3,7 @@
 -->
 <templates id="template" xml:space="preserve">
     <t t-name="OdooChromeGCM">
-        <div class="container" style="max-width: 400px;">
+        <div class="container" style="max-width: 410px;">
             <div class="row screens">
             </div>
         </div>
@@ -74,13 +74,16 @@
                     <a data-toggle="tab" href="#odoo_news"><i class="fa fa-newspaper-o"/> Odoo News </a>
                 </li>
                 <li>
-                    <a><i class="o_refresh fa fa-refresh"/></a>
+                    <a title="Refresh"><i class="o_refresh fa fa-refresh"/></a>
                 </li>
                 <li>
                     <a style="padding: 8px 10px 1px 5px;" id="o_mark_as_read"><i class="o_mark_all_as_read mdi-communication-clear-all" style="font-size: 25px;" title="Mark all as read"/></a>
                 </li>
                 <li>
-                    <a data-toggle="tab" href="#yellow"><i class="fa fa-question-circle"/></a>
+                    <a data-toggle="tab" href="#yellow" title="About Us"><i class="fa fa-question-circle"/></a>
+                </li>
+                <li>
+                    <a href="#" title="Sign Out" class="o_signout"><i class="fa fa-sign-out"/></a>
                 </li>
             </ul>
             <div class="tab-content text-muted o_tab_content" id="my-tab-content">
@@ -120,7 +123,7 @@
         <div t-att-id="widget.name">
             <div t-if="widget.messages.length">
                 <div class="text-muted" style="margin: 8px 0px;padding-bottom: 3px;font-weight: bold;color: #a24689;border-bottom: 1px solid lightgray;"><t t-esc="widget.title"></t> 
-                    <span class="badge"><t t-esc="widget.messages.length"></t></span>
+                    <span class="badge"><t t-esc="widget.get_group_count()"></t></span>
                 </div>
                 <t t-foreach="widget.messages" t-as="message">
                     <t t-call="Message"></t>
