@@ -570,6 +570,11 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             var message_ids = _.map(this.odoo_chrome_gcm_db.load('messages'), function(message) {
                 return message.data.message_id;
             });
+            var related_ids = _.map(this.odoo_chrome_gcm_db.load('messages'), function(message) {
+                return message.data.related_ids;
+            });
+            message_ids = _.union(message_ids, _.flatten(related_ids));
+            console.log("message_ids are ::: ", message_ids);
             this.check_session_and_key().done(function() {
                 new odoo_chrome_gcm.Model(odoo_chrome_gcm.session, "mail.notification")
                     .call("search", [[['message_id', 'in', message_ids]]]).done(function(notification_ids) {
@@ -669,9 +674,11 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             var def = $.Deferred();
             var notification_id = $(e.currentTarget).data("notification_id");
             var message = this.odoo_chrome_gcm_db.get_msg_by_notif_id(notification_id);
+            //For child or parent ids, when message is set to read, its child and parent should also be set to read
+            var message_ids = _.union([message.data.message_id], message.data.related_ids);
             this.parent.check_session_and_key().done(function () {
                 new odoo_chrome_gcm.Model(odoo_chrome_gcm.session, "mail.notification")
-                    .call("search", [[['message_id', '=', message.data.message_id]]]).done(function(notification_ids) {
+                    .call("search", [[['message_id', 'in', message_ids]]]).done(function(notification_ids) {
                             if (notification_ids.length) {
                                 self.parent.set_notification_as_read(notification_ids).done(function(result) {
                                     def.resolve();
