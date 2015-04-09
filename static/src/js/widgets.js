@@ -567,14 +567,16 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
         on_mark_all_as_read: function() {
             var self = this;
             var def = $.Deferred()
-            var message_ids = _.map(this.odoo_chrome_gcm_db.load('messages'), function(message) {
+            var messages = this.odoo_chrome_gcm_db.load('messages');
+            var message_ids = _.map(messages, function(message) {
                 return message.data.message_id;
             });
-            var related_ids = _.map(this.odoo_chrome_gcm_db.load('messages'), function(message) {
+            var related_ids = _.map(messages, function(message) {
                 return message.data.related_ids;
             });
-            message_ids = _.union(message_ids, _.flatten(related_ids));
-            console.log("message_ids are ::: ", message_ids);
+            message_ids = _.union(message_ids, _.flatten(related_ids)).map(function(message_id) {
+                return parseInt(message_id);
+            });
             this.check_session_and_key().done(function() {
                 new odoo_chrome_gcm.Model(odoo_chrome_gcm.session, "mail.notification")
                     .call("search", [[['message_id', 'in', message_ids]]]).done(function(notification_ids) {
@@ -661,7 +663,7 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             this.odoo_chrome_gcm_db.save_mesages('messages', message);
         },
         on_message_click: function(e) {
-            if ($(e.target).hasClass('o_read_done') || $(e.target).hasClass('mdi-action-query-builder') || $(e.target).hasClass('mdi-action-invert-colors')) {
+            if ($(e.target).hasClass('o_read_done') || $(e.target).hasClass('mdi-action-query-builder') || $(e.target).hasClass('o_color_options') ) {
                 return;
             }
             var notification_id = $(e.currentTarget).data("notification_id");
@@ -712,6 +714,7 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
         get_group_count: function() {
             var count = 0;
             _.each(this.messages, function(message) {
+                console.log("message is ::: ", message);
                 count += message.count;
             });
             return count;

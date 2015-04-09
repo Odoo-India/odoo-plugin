@@ -22,21 +22,30 @@ function odoo_chrome_gcm_db(odoo_chrome_gcm) {
         //Create save_message and save_messages two methods
         save_mesages: function(name, message) {
             var data = this.load(name, []);
-            message.count = 1;
-            message.data.related_ids = [message.data.message_id]; //For child or parent ids, when message is set to read, its child and parent should also be set to read
             for(var i = 0, len = data.length; i < len; i++) {
+                if (!data[i].count) {
+                    data[i].count = 1
+                }
+                console.log("data[i] is ::: ", data[i].count);
+                //For child or parent ids, when message is set to read, its child and parent should also be set to read
+                if (!data[i].data.related_ids || !message.data.related_ids) {
+                    message.data.related_ids = [];
+                }
                 if(data[i].data.message_id == message.data.message_id) {
                     _.extend(data[i], message);
                     this.save('messages',data);
                     return;
                 }
                 if (data[i].data.res_id == message.data.res_id && data[i].data.model == message.data.model) {
-                    message.count += 1;
+                    data[i].count += 1;
                     message.data.related_ids.push(data[i].data.message_id);
                     _.extend(data[i], message);
                     this.save('messages',data);
                     return;
                 }
+            }
+            if (!message.count) {
+                message.count = 1;
             }
             data.unshift(message);
             this.save('messages', data);
