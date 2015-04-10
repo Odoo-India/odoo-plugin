@@ -24,22 +24,21 @@ function odoo_chrome_gcm_db(odoo_chrome_gcm) {
             var i;
             var data_length = data.length;
             for (i = 0; i < data_length; i++) {
-                if (!data[i].count) {
-                    data[i].count = 1;
-                }
-                //For child or parent ids, when message is set to read, its child and parent should also be set to read
-                if (!data[i].data.related_ids || !message.data.related_ids) {
-                    message.data.related_ids = [];
-                }
                 if (data[i].data.message_id == message.data.message_id) {
                     _.extend(data[i], message);
                     this.save('messages', data);
                     return;
                 }
                 if (data[i].data.res_id == message.data.res_id && data[i].data.model == message.data.model) {
-                    data[i].count += 1;
-                    message.data.related_ids.push(data[i].data.message_id);
-                    _.extend(data[i], message);
+                    if (!_.contains(data[i].data.related_ids, message.data.message_id)) {
+                        //For child or parent ids, when message is set to read, its child and parent should also be set to read
+                        var related_ids = data[i].data.related_ids || [];
+                        related_ids.push(data[i].data.message_id);
+                        data[i].count += 1;
+                        _.extend(data[i], message);
+                        data[i].data.related_ids = related_ids;
+                    }
+                    //message.data.related_ids.push(data[i].data.message_id);
                     this.save('messages', data);
                     return;
                 }
