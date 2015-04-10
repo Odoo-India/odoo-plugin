@@ -85,21 +85,89 @@ div.panel-body > div > small {
   color:  rgba(0, 0, 0, 0.4) !important;
 }
 
-.card_green {
-  border-left: 6px solid lightseagreen;
+.card_normal{
+      border-left: 6px solid lightseagreen;
 }
-.card_red {
-  border-left: 6px solid #e74c3c;
+.card_high{
+      border-left: 6px solid #e74c3c;
 }
-.card_yellow {
-  border-left: 6px solid #f39c12;
+.card_low{
+      border-left: 6px solid #f39c12;
 }
-.card_gray{
-  border-left: 6px solid #7f8c8d;
+.card_neglect{
+      border-left: 6px solid #7f8c8d;
 }
 .o_change_color i.fa {
   visibility: hidden;
 }
-.card_green [data-color-class="card_green"] i,.card_yellow [data-color-class="card_yellow"] i,.card_red [data-color-class="card_red"] i,.card_gray [data-color-class="card_gray"] i {
-  visibility: visible;
+.card_normal [data-color-class="card_normal"] i,.card_low [data-color-class="card_low"] i,.card_high [data-color-class="card_high"] i,.card_neglect [data-color-class="card_neglect"] i{
+      visibility: visible;
+}
+
+.ui.tag.label, .ui.tag.labels .label {
+  position: relative;
+  border-radius: .2857rem 0 0 .2857rem;
+  width: 75px;
+}
+.ui.label {
+  display: inline-block;
+  vertical-align: baseline;
+  line-height: 1;
+  margin: 0 .125em;
+  background-color: #e8e8e8;
+  border-color: #e8e8e8;
+  background-image: none;
+  padding: .6em .8em;
+  color: rgba(0,0,0,.6);
+  text-transform: none;
+  font-weight: 700;
+  border-radius: .2857rem;
+  box-sizing: border-box;
+  -webkit-transition: background .2s ease;
+  transition: background .2s ease;
+}
+.ui.tag.label:before, .ui.tag.labels .label:before {
+  position: absolute;
+  -webkit-transform: translateY(-50%)translateX(50%)rotate(-45deg);
+  -ms-transform: translateY(-50%)translateX(50%)rotate(-45deg);
+  transform: translateY(-50%)translateX(50%)rotate(-45deg);
+  top: 50%;
+  right: 0%;
+  content: '';
+  background-color: #e8e8e8;
+  background-image: none;
+  width: 1.56em;
+  height: 1.56em;
+  -webkit-transition: background .2s ease;
+  transition: background .2s ease;
+}
+.ui.tag.label:after, .ui.tag.labels .label:after {
+  position: absolute;
+  content: '';
+  top: 50%;
+  right: -.1em;
+  margin-top: -.25em;
+  background-color: #fff!important;
+  width: .5em;
+  height: .5em;
+  box-shadow: 0 1px 0px 0 rgba(0,0,0,.4) inset;
+  border-radius: 500rem;
+}
+
+a[data-color-class="card_high"] .ui.tag.label:before{
+    background-color: #e74c3c;
+}
+a[data-color-class="card_normal"] .ui.tag.label:before{
+    background-color: lightseagreen;
+}
+a[data-color-class="card_low"] .ui.tag.label:before{
+    background-color: #f39c12;
+}
+a[data-color-class="card_neglect"] .ui.tag.label:before{
+    background-color: #7f8c8d;
+}
+
+.highlight{
+  background-color: lightseagreen;
+  color:white;
 }

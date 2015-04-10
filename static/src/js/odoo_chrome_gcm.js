@@ -56,6 +56,34 @@ function application() {
     jQuery(document).ready(function () {
         var app = new odoo_chrome_gcm.App($(".odoo_chrome_gcm"));
         $.material.init();
+        $(document).keyup(function(e) {
+            var search_text = $('.card_search_input').val();
+            if(search_text.length == 0 & e.which == 8){
+                $(".group_header").fadeIn();
+                $('.o_message').show();
+                $(".o_message").unhighlight();
+                $( '.card_search' ).slideUp(200,function(){
+                });
+            }else{
+                _.each($('.o_message'),function(message){
+                    if($(message).text().toLowerCase().indexOf(search_text.toLowerCase()) != -1){
+                        $(message).show();
+                    }else{
+                        $(message).hide();
+                    }
+                });
+                $( '.card_search' ).slideDown(100,function(){
+                    $(".group_header").hide();
+                });
+                if(search_text.length == 0){
+                    $('input').val(String.fromCharCode(e.which).toLowerCase());
+                }
+                $( '.card_search_input').focus();
+                $(".o_message").unhighlight();
+                $(".o_message").highlight(search_text);
+
+            }
+        })
     });
 };
 //chrome.runtime.getBackgroundPage(function(background) {

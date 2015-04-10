@@ -106,7 +106,7 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
         prepare_and_load_server_data: function (messages) {
             var self = this;
             _.each(messages, function (message) {
-                self.odoo_chrome_gcm_db.save_mesages('messages', {'data': { 'subject': message.subject, 'message': message.body, 'record_name': message.record_name, 'res_id': message.res_id, 'model': message.model, 'author_id': message.author_id[0], 'author_name': message.author_id[1], 'date': message.date, 'url': self.get_url(message), 'message_id': message.id, 'is_read': false, 'receive_date': (moment(message.date).format("YYYY-MM-DD HH:MM:SS") || moment().format("YYYY-MM-DD HH:MM:SS")), 'mtype': 'user', 'color_class': 'card_green' }, 'notification_id': self.odoo_chrome_gcm_db.getNotificationId()});
+                self.odoo_chrome_gcm_db.save_mesages('messages', {'data': { 'subject': message.subject, 'message': message.body, 'record_name': message.record_name, 'res_id': message.res_id, 'model': message.model, 'author_id': message.author_id[0], 'author_name': message.author_id[1], 'date': message.date, 'url': self.get_url(message), 'message_id': message.id, 'is_read': false, 'receive_date': (moment(message.date).format("YYYY-MM-DD HH:MM:SS") || moment().format("YYYY-MM-DD HH:MM:SS")), 'mtype': 'user', 'color_class': 'card_normal' }, 'notification_id': self.odoo_chrome_gcm_db.getNotificationId()});
             });
         },
         get_url: function (message) {
