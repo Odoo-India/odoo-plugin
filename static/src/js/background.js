@@ -59,10 +59,10 @@ function on_message_click(notificationId) {
     window.open(message.data.url);
 }
 function on_message_close(notificationId) {
-    odoo_chrome_gcm_db_background.remove_msg_by_notif_id(notificationId);
+    //odoo_chrome_gcm_db_background.remove_msg_by_notif_id(notificationId);
 }
 chrome.gcm.onMessage.addListener(on_message_receive);
 chrome.notifications.onClicked.addListener(on_message_click);
 chrome.notifications.onClosed.addListener(on_message_close);
 
-setTimeout(function() {on_message_receive({data: {'subject': "Test Message", 'message': 'Hi, this is test message \n Testing message list', 'res_id': 1, 'model': 'sale.order', 'author_id': 1, 'author_name': "Administrator", 'date': moment().subtract(1, 'days').format("YYYY-MM-DD HH:MM:SS"), 'mtype': 'user', 'receive_date': moment().format("YYYY-MM-DD HH:MM:SS"), 'message_id': 3}}), 3000});
+//setTimeout(function() {on_message_receive({data: {'subject': "Test Message", 'message': 'Hi, this is test message \n Testing message list', 'res_id': 1, 'model': 'sale.order', 'author_id': 1, 'author_name': "Administrator", 'date': moment().subtract(1, 'days').format("YYYY-MM-DD HH:MM:SS"), 'mtype': 'user', 'receive_date': moment().format("YYYY-MM-DD HH:MM:SS"), 'message_id': 3}}), 3000});

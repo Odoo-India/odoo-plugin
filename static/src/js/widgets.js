@@ -655,7 +655,7 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             var $target = $(e.currentTarget);
             $(".btn-group").removeClass('open');
             var message = this.odoo_chrome_gcm_db.get_msg_by_notif_id($target.data('notification_id'));
-            $target.parents('.o_message').removeClass(message.data.color_class).addClass($target.data('color-class'));
+            $target.parents('.o_message').removeClass('card_normal card_high card_low').addClass($target.data('color-class'));
             message.data.color_class = $target.data('color-class');
             this.odoo_chrome_gcm_db.save_mesages('messages', message);
         },
