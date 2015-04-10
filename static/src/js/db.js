@@ -2,45 +2,45 @@ function odoo_chrome_gcm_db(odoo_chrome_gcm) {
 
     //Important Note: we can use chrome.storage instead of localstorage
     odoo_chrome_gcm.odoo_chrome_gcm_db = openerp.Class.extend({
-        load: function(name, def) {
+        load: function (name, def) {
             //To load data from localstorage
             var data = localStorage[name];
             if (data !== undefined && data !== "") {
                 data = JSON.parse(data);
                 return data;
-            } else {
-                return def || false;
             }
+            return def || false;
         },
-        save: function(name, data) {
+        save: function (name, data) {
             //To save data in localstorage
             localStorage[name] = JSON.stringify(data);
         },
-        clear: function(name) {
+        clear: function (name) {
             localStorage.removeItem(name);
         },
         //Create save_message and save_messages two methods
-        save_mesages: function(name, message) {
+        save_mesages: function (name, message) {
             var data = this.load(name, []);
-            for(var i = 0, len = data.length; i < len; i++) {
+            var i;
+            var data_length = data.length;
+            for (i = 0; i < data_length; i++) {
                 if (!data[i].count) {
-                    data[i].count = 1
+                    data[i].count = 1;
                 }
-                console.log("data[i] is ::: ", data[i].count);
                 //For child or parent ids, when message is set to read, its child and parent should also be set to read
                 if (!data[i].data.related_ids || !message.data.related_ids) {
                     message.data.related_ids = [];
                 }
-                if(data[i].data.message_id == message.data.message_id) {
+                if (data[i].data.message_id == message.data.message_id) {
                     _.extend(data[i], message);
-                    this.save('messages',data);
+                    this.save('messages', data);
                     return;
                 }
                 if (data[i].data.res_id == message.data.res_id && data[i].data.model == message.data.model) {
                     data[i].count += 1;
                     message.data.related_ids.push(data[i].data.message_id);
                     _.extend(data[i], message);
-                    this.save('messages',data);
+                    this.save('messages', data);
                     return;
                 }
             }
@@ -50,30 +50,29 @@ function odoo_chrome_gcm_db(odoo_chrome_gcm) {
             data.unshift(message);
             this.save('messages', data);
         },
-        getNotificationId: function() {
+        getNotificationId: function () {
             var id = Math.floor(Math.random() * 9007199254740992) + 1;
             return id.toString();
         },
-        get_msg_by_notif_id: function(notification_id) {
+        get_msg_by_notif_id: function (notification_id) {
             var datas = this.load('messages');
-            var message = _.find(datas, function(data) { return data.notification_id == notification_id.toString(); });
+            var message = _.find(datas, function (data) { return data.notification_id == notification_id.toString(); });
             return message;
         },
-        remove_msg_by_notif_id: function(notification_id) {
+        remove_msg_by_notif_id: function (notification_id) {
             var datas = this.load('messages');
-            var datas = _.filter(datas, function(data) { return data.notification_id != notification_id.toString(); });
+            datas = _.filter(datas, function (data) { return data.notification_id != notification_id.toString(); });
             this.save('messages', datas);
         },
-        remove_all_msg: function() {
+        remove_all_msg: function () {
             this.save('messages', []);
         },
-        change_messsage_date: function(notification_id, date) {
-            message = this.get_msg_by_notif_id(notification_id);
-            console.log("message is ::: ", message, date);
+        change_messsage_date: function (notification_id, date) {
+            var message = this.get_msg_by_notif_id(notification_id);
             message.data.receive_date = date;
             this.save_mesages('messages', message);
         },
-        clear_storage: function() {
+        clear_storage: function () {
             localStorage.clear();
         },
     });

@@ -7,15 +7,15 @@ function application() {
     odoo_chrome_gcm_widget(odoo_chrome_gcm); //Import widget.js
     odoo_chrome_gcm_db(odoo_chrome_gcm); //Import db
 
-    odoo_chrome_gcm.App = (function() {
+    odoo_chrome_gcm.App = (function () {
         function App($element) {
             this.initialize($element);
         }
         var templates_def = $.Deferred().resolve();
-        App.prototype.add_template_file = function(template) {
+        App.prototype.add_template_file = function (template) {
             var def = $.Deferred();
-            templates_def = templates_def.then(function() {
-                openerp.qweb.add_template(template, function(err) {
+            templates_def = templates_def.then(function () {
+                openerp.qweb.add_template(template, function (err) {
                     if (err) {
                         def.reject(err);
                     } else {
@@ -26,7 +26,7 @@ function application() {
             });
             return def;
         };
-        App.prototype.initialize = function($element) {
+        App.prototype.initialize = function ($element) {
             this.$el = $element;
 
             var Connect = new XMLHttpRequest();
@@ -53,13 +53,13 @@ function application() {
         return App;
     })();
 
-    jQuery(document).ready(function() {
+    jQuery(document).ready(function () {
         var app = new odoo_chrome_gcm.App($(".odoo_chrome_gcm"));
         $.material.init();
     });
 };
 //chrome.runtime.getBackgroundPage(function(background) {
     //odoo_chrome_gcm = background.odoo_chrome_gcm;
-    odoo_chrome_gcm = _.clone(openerp);
-    application();
+odoo_chrome_gcm = _.clone(openerp);
+application();
 //});
