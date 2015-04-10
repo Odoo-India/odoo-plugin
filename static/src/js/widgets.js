@@ -653,6 +653,7 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
         on_change_color: function (e) {
             e.stopPropagation();
             var $target = $(e.currentTarget);
+            $(".btn-group").removeClass('open');
             var message = this.odoo_chrome_gcm_db.get_msg_by_notif_id($target.data('notification_id'));
             $target.parents('.o_message').removeClass(message.data.color_class).addClass($target.data('color-class'));
             message.data.color_class = $target.data('color-class');

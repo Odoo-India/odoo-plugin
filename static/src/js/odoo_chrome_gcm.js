@@ -60,7 +60,7 @@ function application() {
         $(document).keyup(function(e) {
             var search_text = $('.card_search_input').val();
             if(search_text.length == 0 & e.which == 8){
-                $(".group_header").fadeIn();
+                // $(".group_header").fadeIn();
                 $('.o_message').show();
                 $(".o_message").unhighlight();
                 $( '.card_search' ).slideUp(200,function(){
@@ -77,7 +77,7 @@ function application() {
                     $(".group_header").hide();
                 });
                 if(search_text.length == 0){
-                    $('input').val(String.fromCharCode(e.which).toLowerCase());
+                    $('.card_search_input').val(String.fromCharCode(e.which).toLowerCase());
                 }
                 $( '.card_search_input').focus();
                 $(".o_message").unhighlight();

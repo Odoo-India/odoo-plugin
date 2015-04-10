@@ -44,7 +44,7 @@
 .o_tab_content {
   padding: 50px 10px 10px 10px;
   background:#EEEEEE;
-  min-height: 1200px;
+  min-height: 600px;
 }
 .o_group_row {
   margin: 8px 0px;
@@ -172,4 +172,21 @@ a[data-color-class="card_neglect"] .ui.tag.label:before{
 .highlight{
   background-color: lightseagreen;
   color:white;
+}
+
+::-webkit-scrollbar {
+      width:  5px;
+      height: 5px;
+  }
+
+::-webkit-scrollbar-thumb {
+    background: #a24689;
+}
+::-webkit-scrollbar-track {
+    background: #CCC;
+}
+
+/* Remove at the time of production*/
+.group_header,.mdi-action-query-builder{
+  display: none;
 }

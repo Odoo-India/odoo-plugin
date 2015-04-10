@@ -109,12 +109,61 @@
     </t>
 
     <t t-name="OdooNews">
-        <t t-foreach="widget.odoo_news" t-as="message">
+        <!-- <t t-foreach="widget.odoo_news" t-as="message">
             <t t-call="Message"></t>
         </t>
         <t t-if="!widget.odoo_news.length">
             <p class="text-center text-muted o_no_content"><b>No news available!</b></p>
-        </t>
+        </t> -->
+                    <div class="panel panel-default" style="position: relative;" >
+                          <div style="position: absolute; overflow: hidden; clip: rect(0px,auto,150px,0px);">
+                          <img class="img img-responsive" src="https://www.odoo.com/website/image/ir.attachment/868557_8350146/datas"/>
+                          </div>
+                          <div class="panel-body" style="padding-top: 160px;">
+                              <div>
+                                <div>
+
+                                  <b>Odoo releases a new CRM mobile app</b>
+                                </div> 
+                                <div>
+                                  <small>One of the best CRM mobile apps on the market</small>
+                                </div>
+                                  <small style="font-size: 11px;"><i class="mdi-social-person" style="font-size:11px;"></i> Yves-Pascal Mukadi (ypm) <i class="mdi-device-access-time" style="font-size:11px;"></i> Thu Jan 22 2015 5:44 AM</small>
+                              </div>
+                          </div>
+                      </div>
+
+                      <div class="panel panel-default">
+                          <div class="panel-body">
+                              <div>
+                                <div>
+                                  <b>Odoo CMS: Form Builder</b>
+                                </div> 
+                                <div>
+                                  <small>Feedback from our crowdfunding campaign</small>
+                                </div>
+                                  <small style="font-size: 11px;"><i class="mdi-social-person" style="font-size:11px;"></i> Fabien Pinckaers (fp) <i class="mdi-device-access-time" style="font-size:11px;"></i> Thu Jan 22 2015 5:44 AM</small>
+                              </div>
+                          </div>
+                      </div>
+
+                      <div class="panel panel-default" style="position: relative;">
+                          <div style="position: absolute; overflow: hidden; clip: rect(0px,auto,150px,0px);">
+                          <img class="img img-responsive" src="https://www.odoo.com/website/image/ir.attachment/763023_207c8a0/datas"/>
+                          </div>
+                          <div class="panel-body" style="padding-top: 160px;">
+                              <div>
+                                <div>
+
+                                  <b>AdSpike, growth hacking web app to increase Adwords R.O.I.</b>
+                                </div> 
+                                <div>
+                                  <small>An innovative app to help marketers to reduce spending on Google Adwords</small>
+                                </div>
+                                  <small style="font-size: 11px;"><i class="mdi-social-person" style="font-size:11px;"></i> Yves-Pascal Mukadi (ypm) <i class="mdi-device-access-time" style="font-size:11px;"></i> Thu Jan 22 2015 5:44 AM</small>
+                              </div>
+                          </div>
+                      </div>
     </t>
     <t t-name="MessageList">
         <!-- Here MessageGroup is pushed through JavaScript -->
