@@ -53,6 +53,7 @@ function application() {
         return App;
     })();
 
+    //TO Improve: May be move it to MessageScreen or ScreenWidget
     jQuery(document).ready(function () {
         var app = new odoo_chrome_gcm.App($(".odoo_chrome_gcm"));
         $.material.init();

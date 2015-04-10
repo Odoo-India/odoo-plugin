@@ -627,7 +627,8 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             "click .o_message": "on_message_click",
             "click .o_read_done": "on_read_done",
             "click .o_move_record": "on_move_record",
-            "click .o_change_color": "on_change_color"
+            "click .o_change_color": "on_change_color",
+            "click .group_header": "on_group_header_click"
         },
         init: function (parent, group) {
             this.parent = parent;
@@ -693,6 +694,11 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             }).fail(function () {
                 return self.parent.on_session_exception();
             });
+        },
+        on_group_header_click: function(e) {
+            var $target = $(e.currentTarget);
+            var group_id = $target.data('group-id');
+            console.log("$target is :: ", $target, group_id);
         },
         remove_msg_by_notif_id: function (notification_id) {
             var messages = _.filter(this.messages, function (message) { return message.notification_id != notification_id.toString(); });

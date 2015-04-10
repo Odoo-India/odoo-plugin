@@ -55,7 +55,7 @@ function on_message_receive(message) {
 };
 function on_message_click(notificationId) {
     var message = odoo_chrome_gcm_db_background.get_msg_by_notif_id(notificationId);
-    odoo_chrome_gcm_db_background.remove_msg_by_notif_id(notificationId);
+    //odoo_chrome_gcm_db_background.remove_msg_by_notif_id(notificationId);
     window.open(message.data.url);
 }
 function on_message_close(notificationId) {

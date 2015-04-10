@@ -128,7 +128,7 @@
     <t t-name="MessageGroup">
         <div t-att-id="widget.name">
             <div t-if="widget.messages.length">
-                <div class="text-muted group_header" style="margin: 8px 0px;padding-bottom: 3px;font-weight: bold;color: #a24689;border-bottom: 1px solid lightgray;"><t t-esc="widget.title"></t> 
+                <div t-att-data-group-id="widget.name" class="text-muted group_header" style="margin: 8px 0px;padding-bottom: 3px;font-weight: bold;color: #a24689;border-bottom: 1px solid lightgray;"><t t-esc="widget.title"></t> 
                     <span class="badge"><t t-esc="widget.get_group_count()"></t></span>
                 </div>
                 <t t-foreach="widget.messages" t-as="message">

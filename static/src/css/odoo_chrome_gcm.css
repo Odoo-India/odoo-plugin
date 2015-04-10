@@ -31,7 +31,9 @@
   padding-top: 25px;
   font-size: 125%;
 }
-
+.group_header {
+  //cursor: pointer;
+}
 .o_header_nav_tabs {
   background: #fff;
   position: fixed;
