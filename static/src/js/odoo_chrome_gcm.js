@@ -67,10 +67,20 @@ function application() {
                 });
             }else{
                 _.each($('.o_message'),function(message){
-                    if($(message).text().toLowerCase().indexOf(search_text.toLowerCase()) != -1){
-                        $(message).show();
-                    }else{
-                        $(message).hide();
+                    //TO-DO : check before production
+                    if(search_text != 'high'){
+                        if($(message).text().toLowerCase().indexOf(search_text.toLowerCase()) != -1){
+                            $(message).show();
+                        }else{
+                            $(message).hide();
+                        }
+                    }
+                    else{
+                        if($(message).hasClass('card_high')){
+                            $(message).show();
+                        }else{
+                            $(message).hide();
+                        }
                     }
                 });
                 $( '.card_search' ).slideDown(100,function(){
