@@ -655,8 +655,10 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             var $target = $(e.currentTarget);
             $(".btn-group").removeClass('open');
             var message = this.odoo_chrome_gcm_db.get_msg_by_notif_id($target.data('notification_id'));
+            var this_message = this.get_msg_by_notif_id($target.data('notification_id'));
             $target.parents('.o_message').removeClass('card_normal card_high card_low').addClass($target.data('color-class'));
             message.data.color_class = $target.data('color-class');
+            this_message.data.color_class = $target.data('color-class');
             this.odoo_chrome_gcm_db.save_mesages('messages', message);
         },
         on_message_click: function (e) {
@@ -699,8 +701,11 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
         on_group_header_click: function(e) {
             var $target = $(e.currentTarget);
             var group_id = $target.data('group-id');
-            console.log("$target is :: ", $target, group_id);
         },
+        get_msg_by_notif_id: function(notification_id) {
+            var message = _.find(this.messages, function (data) { return data.notification_id == notification_id.toString(); });
+            return message;
+         },
         remove_msg_by_notif_id: function (notification_id) {
             var messages = _.filter(this.messages, function (message) { return message.notification_id != notification_id.toString(); });
             return messages;

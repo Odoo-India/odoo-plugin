@@ -26,6 +26,9 @@ function odoo_chrome_gcm_db(odoo_chrome_gcm) {
             for (i = 0; i < data_length; i++) {
                 if (data[i].data.message_id == message.data.message_id) {
                     _.extend(data[i], message);
+                    var message_to_unshift = data[i];
+                    data = _.without(data, data[i]);
+                    data.unshift(message_to_unshift);
                     this.save('messages', data);
                     return;
                 }
@@ -37,6 +40,9 @@ function odoo_chrome_gcm_db(odoo_chrome_gcm) {
                         data[i].count += 1;
                         _.extend(data[i], message);
                         data[i].data.related_ids = related_ids;
+                        var message_to_unshift = data[i];
+                        data = _.without(data, data[i]);
+                        data.unshift(message_to_unshift);
                     }
                     //message.data.related_ids.push(data[i].data.message_id);
                     this.save('messages', data);
