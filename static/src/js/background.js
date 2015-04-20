@@ -43,14 +43,17 @@ function on_message_receive(message) {
     var title = message.data.subject;
     var body = message.data.message;
     // Pop up a notification to show the GCM message.
+    var origin = odoo_chrome_gcm_db_background.load('server_origin');
     chrome.notifications.create(notificationID, {
         title: title,
-        iconUrl: 'static/src/img/logo.png',
+        iconUrl: origin+'/web/binary/image?model=res.partner&field=image_small&id='+message.data.author_id,
         type: 'basic',
         message: body,
-        isClickable: true
+        isClickable: true,
+        buttons:[{'title':"Open in new tab",'iconUrl':'static/src/img/globe.png'},{'title':"Mark as a Read",'iconUrl':'static/src/img/check-circle.png'}]
     }, function() {});
     var audio = new Audio('static/src/audio/bells-message.mp3');
+    chrome.browserAction.setBadgeText({'text':JSON.parse(localStorage.messages).length.toString()});
     audio.play();
 };
 function on_message_click(notificationId) {
@@ -61,8 +64,17 @@ function on_message_click(notificationId) {
 function on_message_close(notificationId) {
     //odoo_chrome_gcm_db_background.remove_msg_by_notif_id(notificationId);
 }
+chrome.notifications.onButtonClicked.addListener(function(notificationId,buttonIndex) {
+      var message = odoo_chrome_gcm_db_background.get_msg_by_notif_id(notificationId);
+      if(buttonIndex == 0){
+          window.open(message.data.url);
+      }else{
+          odoo_chrome_gcm_db_background.remove_msg_by_notif_id(notificationId);
+      }
+});
 chrome.gcm.onMessage.addListener(on_message_receive);
 chrome.notifications.onClicked.addListener(on_message_click);
 chrome.notifications.onClosed.addListener(on_message_close);
+chrome.browserAction.setBadgeBackgroundColor({'color':'#20b2aa'});
 
-//setTimeout(function() {on_message_receive({data: {'subject': "Test Message", 'message': 'Hi, this is test message \n Testing message list', 'res_id': 1, 'model': 'sale.order', 'author_id': 1, 'author_name': "Administrator", 'date': moment().subtract(1, 'days').format("YYYY-MM-DD HH:MM:SS"), 'mtype': 'user', 'receive_date': moment().format("YYYY-MM-DD HH:MM:SS"), 'message_id': 3}}), 3000});
+setTimeout(function() {on_message_receive({data: {'subject': "Test Message", 'message': 'Hi, this is test message \n Testing message list', 'res_id': 1, 'model': 'sale.order', 'author_id': 1, 'author_name': "Administrator", 'date': moment().subtract(1, 'days').format("YYYY-MM-DD HH:MM:SS"), 'mtype': 'user', 'receive_date': moment().format("YYYY-MM-DD HH:MM:SS"), 'message_id': 3}}), 3000});

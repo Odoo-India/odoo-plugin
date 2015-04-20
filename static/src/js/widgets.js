@@ -494,7 +494,9 @@ function odoo_chrome_gcm_widget(odoo_chrome_gcm) {
             _.map(type_grouped_messages, function (type_group, type) {
                 var key = (type == 'undefined' ? 'user' : type);
                 grouped_messages[key] = _(type_group).groupBy(function (group) {
-                    return (group.data.receive_date).substring(0, 10);
+                    //TO-DO:Remove at the time of production(schedule)
+                    // return (group.data.receive_date).substring(0, 10);
+                    return "2015-04-10";
                 });
             });
             return grouped_messages;
