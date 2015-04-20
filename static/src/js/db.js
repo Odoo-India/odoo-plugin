@@ -45,7 +45,7 @@ function odoo_chrome_gcm_db(odoo_chrome_gcm) {
                         data.unshift(message_to_unshift);
                     }
                     //message.data.related_ids.push(data[i].data.message_id);
-                    this.save('messages', data);
+                    this.save('messages', _.sortBy(data, function(o) { return o.data.date; }));
                     return;
                 }
             }
