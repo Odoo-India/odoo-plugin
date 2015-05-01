@@ -14,6 +14,7 @@ function odoo_chrome_gcm_db(odoo_chrome_gcm) {
         save: function (name, data) {
             //To save data in localstorage
             localStorage[name] = JSON.stringify(data);
+            chrome.browserAction.setBadgeText({'text':JSON.parse(localStorage.messages).length.toString()});
         },
         clear: function (name) {
             localStorage.removeItem(name);
@@ -45,7 +46,7 @@ function odoo_chrome_gcm_db(odoo_chrome_gcm) {
                         data.unshift(message_to_unshift);
                     }
                     //message.data.related_ids.push(data[i].data.message_id);
-                    this.save('messages', _.sortBy(data, function(o) { return o.data.date; }));
+                    this.save('messages', _.sortBy(data, function(o) { return o.data.date; }).reverse());
                     return;
                 }
             }

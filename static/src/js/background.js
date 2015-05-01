@@ -53,7 +53,6 @@ function on_message_receive(message) {
         buttons:[{'title':"Open in new tab",'iconUrl':'static/src/img/globe.png'},{'title':"Mark as a Read",'iconUrl':'static/src/img/check-circle.png'}]
     }, function() {});
     var audio = new Audio('static/src/audio/bells-message.mp3');
-    chrome.browserAction.setBadgeText({'text':JSON.parse(localStorage.messages).length.toString()});
     audio.play();
 };
 function on_message_click(notificationId) {
