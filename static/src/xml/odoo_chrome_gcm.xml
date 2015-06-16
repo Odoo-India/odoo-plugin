@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- vim:fdl=1:
--->
+
 <templates id="template" xml:space="preserve">
     <t t-name="OdooChromeGCM">
         <div class="container" style="max-width: 410px;">
@@ -195,16 +194,16 @@
                         <span data-target="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><span class="o_color_options mdi-action-label-outline"/><div class="ripple-wrapper"></div></span>
                         <ul class="dropdown-menu" style="min-width:120px;left: -100px;">
                             <li>
-                                <a href="#" t-att-data-notification_id="message.notification_id" data-color-class="card_high" class="o_change_color"><div style="background-color:#e74c3c;" class="ui tag label"><i class="fa fa-check"></i> High</div></a>
+                                <a t-att-data-notification_id="message.notification_id" data-color-class="card_high" class="o_change_color"><div style="background-color:#e74c3c;" class="ui tag label"><i class="fa fa-check"></i> High</div></a>
                             </li>
                             <li>
-                                <a href="#" t-att-data-notification_id="message.notification_id" data-color-class="card_normal" class="o_change_color"><div style="background-color:lightseagreen;" class="ui tag label"><i class="fa fa-check"></i> Normal</div></a>
+                                <a t-att-data-notification_id="message.notification_id" data-color-class="card_normal" class="o_change_color"><div style="background-color:lightseagreen;" class="ui tag label"><i class="fa fa-check"></i> Normal</div></a>
                             </li>
                             <li>
-                                <a href="#" t-att-data-notification_id="message.notification_id" data-color-class="card_low" class="o_change_color"><div style="background-color:#f39c12;" class="ui tag label"><i class="fa fa-check"></i> Low</div></a>
+                                <a t-att-data-notification_id="message.notification_id" data-color-class="card_low" class="o_change_color"><div style="background-color:#f39c12;" class="ui tag label"><i class="fa fa-check"></i> Low</div></a>
                             </li>
                             <li>
-                                <a href="#" t-att-data-notification_id="message.notification_id" data-color-class="card_neglect" class="o_change_color"><div style="background-color:#7f8c8d;" class="ui tag label"><i class="fa fa-check"></i> Neglect</div></a>
+                                <a t-att-data-notification_id="message.notification_id" data-color-class="card_neglect" class="o_change_color"><div style="background-color:#7f8c8d;" class="ui tag label"><i class="fa fa-check"></i> Neglect</div></a>
                             </li>
                         </ul>
                     </div>

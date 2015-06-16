@@ -14,7 +14,9 @@ function odoo_chrome_gcm_db(odoo_chrome_gcm) {
         save: function (name, data) {
             //To save data in localstorage
             localStorage[name] = JSON.stringify(data);
-            chrome.browserAction.setBadgeText({'text':JSON.parse(localStorage.messages).length.toString()});
+            if(localStorage.messages){
+                chrome.browserAction.setBadgeText({'text':JSON.parse(localStorage.messages).length.toString()});
+            }
         },
         clear: function (name) {
             localStorage.removeItem(name);
